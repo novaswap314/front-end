@@ -1,9 +1,11 @@
 import React from "react";
 import styled from 'styled-components'
+import { Link } from 'react-router-dom';
 import { Button } from 'antd';
+import TwitterX from '@/components/Icons/TwitterX.jsx'
 
 const Homewrapper = styled.div`
-    padding-top: ${({ theme }) => theme.height};
+    padding: calc(${({ theme }) => theme.height} + 100px) 0 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,9 +26,10 @@ const Homewrapper = styled.div`
 const Home = () => {
     return(
         <Homewrapper>
-            <h1>novaswap is launching for erc314 market.</h1>
+            <h1>NovaSwap - The First MarketPlace for ERC314</h1>
             <h2>$nova for airdrop</h2>
             <h2>Sooooooooooon!</h2>
+            <a className="text-white text-3xl mt-auto" href="https://twitter.com/novaswap_erc" target="_black"><TwitterX /></a>
         </Homewrapper>
     )
 }

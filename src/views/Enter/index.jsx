@@ -23,8 +23,7 @@ function Enter() {
 
                         contentChildren={
                             <Switch>
-                                <Route path="/" component={Roulette} />
-                                {/* <Redirect from='/*' to='/' /> */}
+                                <Route path="/swap" component={Roulette} />
                             </Switch>
                         }
                     />

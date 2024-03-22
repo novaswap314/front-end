@@ -31,6 +31,11 @@ const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
         const sanitizedValue = value.replace(/[^\d.]/g, ''); // 只保留数字和小数点
         setNumber(sanitizedValue)
     }, 100)
+    
+    // const swapInputChange = (value) => {
+    //     const sanitizedValue = value.replace(/[^\d.]/g, ''); // 只保留数字和小数点
+    //     setNumber(sanitizedValue)
+    // }
 
     const hangleMax = (val) => {
         setNumber(val)

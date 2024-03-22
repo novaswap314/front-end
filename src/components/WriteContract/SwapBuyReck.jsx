@@ -16,6 +16,8 @@ export default function SwapBuyReck() {
     const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
          hash,
     })
+
+    console.log('isConfirming>>', isConfirming)
     
     async function submit(e) {
         // if (!user.currentPairInfo?.tokenAddress) {

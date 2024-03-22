@@ -37,8 +37,8 @@ function App() {
                         <Header></Header>
                         <Switch>
                             <Route path="/homepage" component={Home} />
-                            <Route path="/" component={Enter} />
-                            <Redirect from='/*' to='/' />
+                            <Route path="/swap" component={Enter} />
+                            <Redirect from='/*' to='/homepage' />
                         </Switch>
                     </Fragment>
                 </BrowserRouter>
