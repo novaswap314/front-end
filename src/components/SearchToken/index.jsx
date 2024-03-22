@@ -41,11 +41,11 @@ const SearchToken = ({ getSelectToken }) => {
         if (data && data.name) {
             getSelectToken({
                 ...data,
-                blockToUnlockLiquidity: data.blockToUnlockLiquidity.toString(),
-                decimals: data.decimals.toString(),
-                pool0p: data.pool0p.toString(),
-                pool1p: data.pool1p.toString(),
-                totalSupply: data.totalSupply.toString(),
+                blockToUnlockLiquidity: data.blockToUnlockLiquidity?.toString(),
+                decimals: data.decimals?.toString(),
+                pool0p: data.pool0p?.toString(),
+                pool1p: data.pool1p?.toString(),
+                totalSupply: data.totalSupply?.toString(),
                 tokenAddress: inputValue,
             })
             dialog.closeDialog()

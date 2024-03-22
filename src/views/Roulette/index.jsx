@@ -65,7 +65,7 @@ const RouletteWheel = () => {
     // 池子基础信息
     dispatch(userActions.setCurrentPairInfo({
       ...item,
-
+      tokenAddress: item.ca,
     }))
   }
   

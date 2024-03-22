@@ -42,7 +42,7 @@ export default function SwapBuyReck() {
                 abi: novaAbi,
                 address: novaAddress,
                 functionName: 'swapSellReck',
-                args: [user.currentPairInfo?.tokenAddress, '447312993086645723816'],
+                args: [user.currentPairInfo?.tokenAddress, amount],
                 gasPrice: gas,
             })
         }
@@ -50,7 +50,7 @@ export default function SwapBuyReck() {
 
     return (
         <Fragment>
-            <ButtonWrapper loading={isPending} onClick={() => submit()} type="primary" size="large" block>{isPending ? 'Confirming...' : 'Trade'}</ButtonWrapper>
+            <ButtonWrapper loading={isPending || isConfirming} onClick={() => submit()} type="primary" size="large" block>{isPending ? 'Confirming...' : 'Trade'}</ButtonWrapper>
             <p className='mt-4'>{error && (
                 <div>Error: {error.shortMessage || error.message}</div>
               )}</p>
