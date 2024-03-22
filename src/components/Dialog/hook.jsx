@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import { Dialog as PDialog } from 'primereact/dialog';
+import { Modal } from 'antd';
 
 const DialogContext = createContext();
 
@@ -30,9 +30,9 @@ export const DialogProvider = ({ children }) => {
 
   return (
     <DialogContext.Provider value={{ isOpen, title, content, openDialog, closeDialog }}>
-      <PDialog header={title} draggable={false} visible={isOpen} style={{ width: '300px'}} onHide={closeDialog}>
+      <Modal title={title} footer={false} draggable={false} open={isOpen} style={{ width: '300px'}} onCancel={closeDialog}>
         {content}
-      </PDialog>
+      </Modal>
       {children}
     </DialogContext.Provider>
   );

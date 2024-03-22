@@ -28,12 +28,12 @@ const HamburgerWrapper = styled.div`
     background-color: #444;
     cursor: pointer;
     color: ${({ theme }) => theme.text2};
-    transform: rotate(180deg);
+    transform: rotate(0deg);
     &:hover {
         color: ${({ theme }) => theme.text1};
     }
     ${({ rotate }) => rotate && css`
-        transform: rotate(0deg);
+        transform: rotate(180deg);
     `}
 
 `

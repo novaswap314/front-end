@@ -4,32 +4,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown } from 'antd';
 import { userActions } from '@/store/module/user';
 import { globalActions } from '@/store/module/global';
-import { Row, ImgBase } from '../../theme/base';
+import { useAccount, useDisconnect } from 'wagmi'
 import Disconnect from '@/components/Icons/Disconnect.jsx';
-// import { useDialog } from '../Dialog/hook'
-// import { useToast } from '../Toast';  
-import LOGO from '../../assets/logo.svg'
 
 export default function ConnectWallet() {
     const user = useSelector(state => state.user);
     const global = useSelector(state => state.global);
+    const { address, status, isConnecting, chain } = useAccount()
+    const { disconnect } = useDisconnect()
     const dispatch = useDispatch();
 
     const items = [
         {
-            label: <a href="https://www.antgroup.com">1st menu item</a>,
-            key: '0',
-        },
-        {
-            label: <div className='flex items-center'><Disconnect /> <span className='ml-2'>Disconnect</span></div> ,
+            label: <div className='flex items-center' onClick={() => handleDisconnect()}><Disconnect /> <span className='ml-2'>Disconnect</span></div> ,
             key: '3',
         },
     ];
 
-    const ConnectWallet = async () => {
-        if (!atom) {
-            return showError('Please install atomical wallet.')
-        }
+    const handleDisconnect = () => {
+        disconnect()
+        updateAddress('')
+        updateConnect(false)
     }
 
     const updateAddress = (newAddress) => {
@@ -39,34 +34,23 @@ export default function ConnectWallet() {
         dispatch(globalActions.setConnect(connect));
     }
 
-    const handleOpenDialog = () => {
-        openDialog(
-            'Connect Wallet',
-            <ChooseList>
-                <Row className='row' onClick={() => ConnectWallet()}>
-                    <ImgBase width="2.5rem" src={LOGO} alt="atomicals" />
-                    <p className='name'>Atomicals Wallet</p>
-                </Row>
-            </ChooseList>
-        );
-    }
-
     const checkAddress = async () => {
-        let accounts = await atom.getAccounts()
-
-        if (!accounts || accounts.length == 0) {
-            accounts = await atom.requestAccounts()
-        }
-
-        if (accounts.length > 0) {
-            updateAddress(accounts[0])
+        if (address) {
+            updateAddress(address)
             updateConnect(true)
         }
     }
 
     useEffect(() => {
         checkAddress()
-    }, [])
+        if (status == 'connected' && chain) {
+            dispatch(userActions.setCurrentChainInfo({
+                id: chain.id,
+                name: chain.name,
+                nativeCurrency: chain.nativeCurrency
+            }))
+        }
+    }, [status, chain, address])
 
     return (
         <Fragment>
@@ -75,7 +59,7 @@ export default function ConnectWallet() {
                     ? <Dropdown menu={{ items }} placement="bottomLeft">
                         <Button type="primary">{user.address.replace(/^(\w{4}).*(\w{4})$/, '$1***$2')}</Button>
                     </Dropdown>
-                    : <Button type="primary" onClick={() => handleOpenDialog()} label="Connect" />
+                    : <w3m-button />
             }
         </Fragment>
     )

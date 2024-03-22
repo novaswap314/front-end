@@ -1,7 +1,8 @@
 import React,{ useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { ConfigProvider } from 'antd';
 import Header from '@/components/Layout/Header.jsx'
+import { DialogProvider } from '@/components/Dialog/hook';
+import { ConfigProvider } from 'antd';
 import { Layout } from 'antd';
 import { useSelector, useDispatch } from "react-redux";
 import { globalActions } from '@/store/module/global';
@@ -45,49 +46,65 @@ const Index = ({ siderChildren, contentChildren }) => {
                 },
                 token: {
                     colorPrimary: theme.colorPrimary,
-                    borderRadius: 4,
+                    borderRadius: 8,
                     controlHeight: 30, // 按钮和输入框等基础控件的高度
                     colorBgSpotlight: 'rgba(68, 68, 68, 1)',
+                    colorTextDisabled: '#fff',
+                    colorTextDescription: '#fff',
                 },
             }}
         >
-            <Layout style={layoutStyle}>
-                <Header></Header>
-                <Layout>
-                    <Content style={contentStyle}>
-                        { contentChildren }
-                    </Content>
-                    <SlideWrapper width={global.isHamburger ? theme.slideHamWidth : theme.slideWidth} style={siderStyle}>
-                        { siderChildren }
-                    </SlideWrapper>
+            <DialogProvider>
+                <Layout style={layoutStyle}>
+                    <Header></Header>
+                    <Layout style={innerLayoutStyle}>
+                        <ContentWrapper style={contentStyle}>
+                            { contentChildren }
+                        </ContentWrapper>
+                        <SlideWrapper width={global.isHamburger ? theme.slideHamWidth : theme.slideWidth} style={siderStyle}>
+                            { siderChildren }
+                        </SlideWrapper>
+                    </Layout>
                 </Layout>
-            </Layout>
+            </DialogProvider>
         </ConfigProvider>
     )
 }
 const SlideWrapper = styled(Sider)`
     padding-top: ${({ theme }) => theme.height};
 `
+const ContentWrapper = styled(Content)`
+    padding-top: ${({ theme }) => theme.height};
+`
 const contentStyle = {
     textAlign: 'center',
-    minHeight: '100vh',
+    minHeight: '90vh',
     color: '#fff',
     backgroundColor: 'black',
     overflowY: 'scroll',
-    maxHeight: 'calc(100vh)',
 };
 const siderStyle = {
     backgroundColor: 'black',
-    borderRight: '1px solid hsla(0,0%,100%,.2)',
+    borderLeft: '1px solid hsla(0,0%,100%,.2)',
     
 };
 const layoutStyle = {
     borderRadius: 0,
     overflow: 'hidden',
-    width: 'calc(100%)',
+    width: 'calc(100%-2px)',
     maxWidth: 'calc(100%)',
     height: '100vh',
     backgroundColor: 'black',
+    boxSizing: 'border-box',
 };
+const innerLayoutStyle = {
+    border: '1px solid hsla(0,0%,100%,.2)',
+    backgroundColor: 'black',
+    // minHeight: '80vh',
+    // width: '90%',
+    // borderRadius: '8px',
+    // overflow: 'hidden',
+    // margin: '100px auto 0',
+}
 
 export default Index

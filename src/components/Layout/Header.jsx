@@ -1,28 +1,18 @@
 import styled, { css } from 'styled-components';
 import { useHistory, NavLink } from 'react-router-dom'
 import React, { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import { Button, Dropdown } from 'antd';
+import { useSwitchChain } from 'wagmi'
+import { useSelector } from 'react-redux';
 import ConnectWallet from '../ConnectWallet/index.jsx';
 import LogoW from '@/assets/logo.svg';
 import GasStation from '@/components/Icons/GasStation.jsx'
 
 export const Header = () => {
     const history = useHistory();
+    const user = useSelector(state => state.user)
     const [currentPath, setCurrentPath] = useState(history.location.pathname);
-    const [gasPrice, setGasPrice] = useState('');
-
-    const navList = [
-        // { label: 'Home', icon: 'i-tabler-home', id: 0, path: '/home' },
-        { label: 'Marketplace', icon: 'i-tabler-shopping-bag', id: 1, path: '/market' },
-        { label: 'Token', id: 2, icon: 'i-tabler-report-money', path: '/token' },
-        { label: 'Mint', id: 3, icon: 'i-tabler-pencil', path: '/mint' },
-        { label: 'Explore', id: 4, icon: 'i-tabler-compass', path: '/explore' },
-        { label: 'Balance', id: 5, icon: 'i-tabler-wallet', path: '/balance' },
-    ]
-
-    const handleRoute = (path) => {
-        history.push(path)
-    }
+    const { chains, switchChain } = useSwitchChain()
 
     useEffect(() => {
         const unlisten = history.listen((location) => {
@@ -34,38 +24,37 @@ export const Header = () => {
         };
     }, [history]);
 
-    useEffect(() => {
-        fetch('https://mempool.space/api/v1/fees/recommended')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                // 解析响应的 JSON 数据
-                return response.json();
-            })
-            .then(data => {
-                setGasPrice(data.halfHourFee)
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    } ,[])
+    // useEffect(() => {
+    //     fetch('https://mempool.space/api/v1/fees/recommended')
+    //         .then(response => {
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! Status: ${response.status}`);
+    //             }
+    //             // 解析响应的 JSON 数据
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //             setGasPrice(data.halfHourFee)
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //         });
+    // } ,[])
 
     return(
         <HeaderWrapper>
             <img src={LogoW} className='w-12' />
-            {/* <UlWrapper>
-                {
-                    navList.map(item => {
-                        return <LiWrapper current={currentPath==item.path?'true':''} key={item.id} onClick={() => handleRoute(item.path)}>
-                            <LiInner><i className={item.icon} style={{fontSize:'1.3rem'}}></i><span>{ item.label }</span></LiInner>
-                        </LiWrapper>
-                    })
-                }
-            </UlWrapper> */}
             <ButtonWrapper>
                 <GasWrapper>
-                    <Button ghost><span className='text-base'>{ gasPrice }</span>sat/vB</Button>
+                    <Dropdown
+                        menu={{ items: chains.map((v) => {
+                            v.label = <div onClick={() => switchChain({ chainId: v.id })}>{v.name}</div>
+                            return v
+                        }) }}
+                        placement="bottomRight"
+                    >
+                        <Button ghost>{ user?.currentChainInfo.name }</Button>
+                    </Dropdown>
                 </GasWrapper>
                 <ConnectWallet />
             </ButtonWrapper>

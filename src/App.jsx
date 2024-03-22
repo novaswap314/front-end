@@ -11,32 +11,28 @@ import Explore from '@/views/Explore/index.jsx'
 import Balance from '@/views/Balance/index.jsx'
 import Roulette from '@/views/Roulette/index.jsx'
 
+import { Web3ModalProvider } from '@/libs/wagmi.js'
 
 function App() {
     return (
-        <BrowserRouter>
-            <Fragment>
-                <Index
-                    siderChildren = {
-                        <Slide></Slide>
-                    }
+        <Web3ModalProvider>
+            <BrowserRouter>
+                <Fragment>
+                    <Index
+                        siderChildren={
+                            <Slide></Slide>
+                        }
 
-                    contentChildren = {
-                        <Switch>
-                            <Route path="/home" component={Home} />
-                            <Route path="/market" component={Marketplace} />
-                            <Route path="/token" component={Token} />
-                            <Route path="/mint" component={Mint} />
-                            <Route path="/explore" component={Explore} />
-                            <Route path="/balance" component={Balance} />
-                            <Route path="/roulette" component={Roulette} />
-                            <Route exact path="/" component={Home} />
-                            <Redirect from='/*' to='/' />
-                        </Switch>
-                    }
-                />
-            </Fragment>
-        </BrowserRouter>
+                        contentChildren={
+                            <Switch>
+                                <Route path="/" component={Roulette} />
+                                <Redirect from='/*' to='/' />
+                            </Switch>
+                        }
+                    />
+                </Fragment>
+            </BrowserRouter>
+        </Web3ModalProvider>
     )
 }
 

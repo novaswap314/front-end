@@ -37,7 +37,7 @@ export function colors(darkMode) {
 
     //specialty colors
     slideHamWidth: '60px',
-    slideWidth: '220px',
+    slideWidth: '560px',
 
     // other
     red1: '#FF6871',
