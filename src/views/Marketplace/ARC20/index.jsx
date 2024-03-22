@@ -66,7 +66,6 @@ const ARC20 = () => {
     };
 
     const gotoDetail = (e) => {
-        console.log('e::', e)
         history.push(`/market/arc20/${e.id}`)
     }
 

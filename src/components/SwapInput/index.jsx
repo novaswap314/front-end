@@ -17,7 +17,6 @@ const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
     const dialog = useDialog();
 
     const getSelectToken = (v) => {
-        console.log('v>>>>>', v)
         dispatch(userActions.setCurrentPairInfo(v))
     }
 

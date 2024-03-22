@@ -11,18 +11,19 @@ import Loading from '../Loading';
 const { Search } = Input;
 
 const SearchToken = ({ getSelectToken }) => {
-    const [inputValue, setInputValue] = useState('0x74b7988Bd9dDbeD4b0ab30B208Bfbb911B45e948');
-    const { selectType } = useSelector(state => state.user)
+    const [inputValue, setInputValue] = useState('0xf506Ec19d64ab3850A52FAEC139D2b2fb071e839');
     const dialog = useDialog()
     const chainId = useChainId()
     const dispatch = useDispatch()
 
-    const { isLoading, data } = useReadContract({
+    const { isLoading, data, error } = useReadContract({
         address: novaAddress,
         abi: novaAbi,
         functionName: 'getTokenInfo',
         args: [inputValue]
     })
+
+    console.log('data>>', isLoading, data, error)
 
     const onSearch = async (e) => {
         setInputValue(e);
@@ -51,21 +52,6 @@ const SearchToken = ({ getSelectToken }) => {
         }
     }
 
-    const data1 = [
-        {
-          title: 'Ant Design Title 1',
-        },
-        {
-          title: 'Ant Design Title 2',
-        },
-        {
-          title: 'Ant Design Title 3',
-        },
-        {
-          title: 'Ant Design Title 4',
-        },
-      ]
-
     return (
         <div>
             <Search
@@ -87,7 +73,7 @@ const SearchToken = ({ getSelectToken }) => {
             }
             
             <div className='mt-4 text-center'>
-                <Button type="primary" onClick={searchConfirm}>Comfirm</Button>
+                <Button type="primary" loading={isLoading} onClick={searchConfirm}>Comfirm</Button>
             </div>
         </div>
     );

@@ -23,17 +23,12 @@ const Slide = () => {
     })
 
     const { isLoading: balanceLoading, data: arc20balance, error } = useReadContract({
-    // const result = useReadContract({
         abi: novaAbi,
         address: novaAddress,
         functionName: 'balanceOf',
         args: [user.currentPairInfo?.tokenAddress],
-        overrides: {
-            from: address
-        }
+        account: address,
     })
-
-    console.log('arc20balance>>>', balanceLoading, arc20balance, error)
 
     const { isLoading: outLoading, data: outData } = useReadContract({
         abi: novaAbi,
@@ -41,7 +36,6 @@ const Slide = () => {
         functionName: user.isBuy ? 'routeBuyOut' : 'routeSellOut',
         args: [user.currentPairInfo?.tokenAddress, parseUnits(user?.input.inputValue.toString(), 18)]
     })
-    console.log('routeBuyOut outData:', outData)
 
     useEffect(() => {
         if (!isLoading && balance) {
@@ -61,7 +55,7 @@ const Slide = () => {
             let put = {
                 name: user.currentPairInfo?.symbol,
                 symbol: user.currentPairInfo?.symbol,
-                balance: arc20balance ? arc20balance?.toString() : 0
+                balance: arc20balance ? arc20balance[1]?.toString() : 0
             }
             if (user.selectType == 'input') {
                 dispatch(userActions.setInput(put))
@@ -154,7 +148,7 @@ const Slide = () => {
                 <SwapInput getInputValue={(v) => getOutputValue(v)} tokenInfo={user.output} type='output' />
             </PanelColor>
             <SwapBuyReck />
-            <HamburgerPosition></HamburgerPosition>
+            {/* <HamburgerPosition></HamburgerPosition> */}
         </SlideWrapper>
     )
 }

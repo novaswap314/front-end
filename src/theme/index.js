@@ -29,7 +29,7 @@ export function colors(darkMode) {
     gray5: 'hsla(0,0%,100%,.1)',
 
     //primary colors
-    colorPrimary: '#44A08D',
+    colorPrimary: '#a8ff78',
     primary2: '#FF8CC3',
     primary3: '#FF99C9',
     primary4: '#F6DDE8',
@@ -124,7 +124,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  background-color: black;
+  background-color: #222;
 }
 `
 

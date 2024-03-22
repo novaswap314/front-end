@@ -1,8 +1,7 @@
 import React,{ useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import Header from '@/components/Layout/Header.jsx'
+
 import { DialogProvider } from '@/components/Dialog/hook';
-import { ConfigProvider } from 'antd';
 import { Layout } from 'antd';
 import { useSelector, useDispatch } from "react-redux";
 import { globalActions } from '@/store/module/global';
@@ -35,39 +34,18 @@ const Index = ({ siderChildren, contentChildren }) => {
     }, [handleResize]);
 
     return (
-        <ConfigProvider
-            theme={{
-                components: {
-                    Button: {
-                        paddingBlock: 2,
-                        paddingInline: 6,
-                        defaultGhostBorderColor: theme.gray3,
-                    },
-                },
-                token: {
-                    colorPrimary: theme.colorPrimary,
-                    borderRadius: 8,
-                    controlHeight: 30, // 按钮和输入框等基础控件的高度
-                    colorBgSpotlight: 'rgba(68, 68, 68, 1)',
-                    colorTextDisabled: '#fff',
-                    colorTextDescription: '#fff',
-                },
-            }}
-        >
-            <DialogProvider>
-                <Layout style={layoutStyle}>
-                    <Header></Header>
-                    <Layout style={innerLayoutStyle}>
-                        <ContentWrapper style={contentStyle}>
-                            { contentChildren }
-                        </ContentWrapper>
-                        <SlideWrapper width={global.isHamburger ? theme.slideHamWidth : theme.slideWidth} style={siderStyle}>
-                            { siderChildren }
-                        </SlideWrapper>
-                    </Layout>
+        <DialogProvider>
+            <Layout style={layoutStyle}>
+                <Layout style={innerLayoutStyle}>
+                    <ContentWrapper style={contentStyle}>
+                        { contentChildren }
+                    </ContentWrapper>
+                    <SlideWrapper width={global.isHamburger ? theme.slideHamWidth : theme.slideWidth} style={siderStyle}>
+                        { siderChildren }
+                    </SlideWrapper>
                 </Layout>
-            </DialogProvider>
-        </ConfigProvider>
+            </Layout>
+        </DialogProvider>
     )
 }
 const SlideWrapper = styled(Sider)`
@@ -80,11 +58,11 @@ const contentStyle = {
     textAlign: 'center',
     minHeight: '90vh',
     color: '#fff',
-    backgroundColor: 'black',
+    backgroundColor: '#222',
     overflowY: 'scroll',
 };
 const siderStyle = {
-    backgroundColor: 'black',
+    backgroundColor: '#222',
     borderLeft: '1px solid hsla(0,0%,100%,.2)',
     
 };
@@ -94,12 +72,12 @@ const layoutStyle = {
     width: 'calc(100%-2px)',
     maxWidth: 'calc(100%)',
     height: '100vh',
-    backgroundColor: 'black',
+    backgroundColor: '#222',
     boxSizing: 'border-box',
 };
 const innerLayoutStyle = {
     border: '1px solid hsla(0,0%,100%,.2)',
-    backgroundColor: 'black',
+    backgroundColor: '#222',
     // minHeight: '80vh',
     // width: '90%',
     // borderRadius: '8px',

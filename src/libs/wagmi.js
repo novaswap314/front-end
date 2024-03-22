@@ -80,7 +80,12 @@ createWeb3Modal({
     wagmiConfig: config,
     projectId,
     enableAnalytics: true, // Optional - defaults to your Cloud configuration
-    enableOnramp: true // Optional - false as default
+    enableOnramp: true, // Optional - false as default
+    themeVariables: {
+        '--w3m-accent': '#a8ff78',
+        // '--w3m-color-mix-strength': 40,
+        '--w3m-font-size-master': '8px',
+    }
 })
 
 export function Web3ModalProvider({ children }) {

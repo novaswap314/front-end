@@ -1,4 +1,4 @@
-export const novaAddress = '0x50984cCB631C9c5b13B9314321F4E73Fa085426A'
+export const novaAddress = '0x8F68B5B6E9ef006a543c37109aBf9F31D37fEE73'
 
 export const novaAbi = [
     {

@@ -43,19 +43,24 @@ export const Header = () => {
 
     return(
         <HeaderWrapper>
-            <img src={LogoW} className='w-12' />
+            <img src={LogoW} className='w-10' />
             <ButtonWrapper>
-                <GasWrapper>
-                    <Dropdown
-                        menu={{ items: chains.map((v) => {
-                            v.label = <div onClick={() => switchChain({ chainId: v.id })}>{v.name}</div>
-                            return v
-                        }) }}
-                        placement="bottomRight"
-                    >
-                        <Button ghost>{ user?.currentChainInfo.name }</Button>
-                    </Dropdown>
-                </GasWrapper>
+                {
+                    user.address
+                    ? <GasWrapper>
+                            <Dropdown
+                                menu={{ items: chains.map((v) => {
+                                    v.label = <div onClick={() => switchChain({ chainId: v.id })}>{v.name}</div>
+                                    return v
+                                }) }}
+                                placement="bottomRight"
+                            >
+                                <Button ghost>{ user?.currentChainInfo.name }</Button>
+                            </Dropdown>
+                        </GasWrapper>
+                    : <></>
+                }
+                
                 <ConnectWallet />
             </ButtonWrapper>
         </HeaderWrapper>

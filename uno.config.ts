@@ -7,7 +7,7 @@ export default defineConfig({
         presetWebFonts({
             provider: 'google',
             fonts: {
-                mono: ['Titillium Web:200,300,400,600,700,900'],
+                mono: ['Titillium Web:200,300,400,600,700,900', 'Staatliches'],
             },
         }),
         presetUno(),

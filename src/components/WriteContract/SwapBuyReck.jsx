@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { novaAbi, novaAddress } from '../../constant';
 import { Button, notification } from 'antd';
 import styled from 'styled-components';
-import { parseUnits } from 'viem'
+import { parseUnits, formatEther } from 'viem'
 
 export default function SwapBuyReck() {
     const [api, contextHolder] = notification.useNotification();
@@ -17,8 +17,6 @@ export default function SwapBuyReck() {
          hash,
     })
     
-    console.log('error::::', error)
-
     async function submit(e) {
         // if (!user.currentPairInfo?.tokenAddress) {
         //     api.error({
@@ -29,14 +27,25 @@ export default function SwapBuyReck() {
         //     return;
         // }
         let amount = parseUnits(user?.input.inputValue.toString(), 18)
-        writeContract({
-            abi: novaAbi,
-            address: novaAddress,
-            functionName: user.isBuy ? 'swapBuyReck' : 'swapSellReck',
-            args: user.isBuy ? [user.currentPairInfo?.tokenAddress] : [user.currentPairInfo?.tokenAddress, amount],
-            value: user.isBuy ? amount : 0,
-            gasPrice: gas,
-        })
+
+        if (user.isBuy) {
+            writeContract({
+                abi: novaAbi,
+                address: novaAddress,
+                functionName: 'swapBuyReck',
+                args: [user.currentPairInfo?.tokenAddress],
+                value: amount,
+                gasPrice: gas,
+            })
+        } else {
+            writeContract({
+                abi: novaAbi,
+                address: novaAddress,
+                functionName: 'swapSellReck',
+                args: [user.currentPairInfo?.tokenAddress, '447312993086645723816'],
+                gasPrice: gas,
+            })
+        }
     }
 
     return (
