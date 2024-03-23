@@ -31,6 +31,20 @@ const Homewrapper = styled.div`
         font-weight: bold;
         margin-top: 24px;
     }
+
+    ${({theme}) => theme.md`
+        background: url(${BGCIRCLE}) no-repeat center / cover, 
+            url(${BLURL}) no-repeat left top / 600px, 
+            url(${BLURR}) no-repeat right bottom -200px / 540px,
+            url(${GRID}) no-repeat 70% center / 400px;
+        height: auto;
+        h1 {
+            font-size: 28px;
+        }
+        h2 {
+            font-size: 22px;
+        }
+    `}
 `
 const Gird = styled.div`
     margin: 160px auto 0;
@@ -46,6 +60,7 @@ const GirdItem = styled.div`
     padding: 24px 42px;
     font-weight: bold;
     text-align: center;
+    font-size: 16px;
 `
 const A = styled.a`
     &:hover {
