@@ -108,14 +108,24 @@ const Slide = () => {
     return (
         <SlideWrapper>
             {/* price */}
-            <Panel>
-                <div className="flex items-center justify-around">
-                    <div>
-                        <Text>Price ETH</Text>
-                        <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): '??'}</BoldText>
+            <div className="flex gap-4">
+                <Panel className='flex-1'>
+                    <div className="flex items-center justify-around">
+                        <div>
+                            <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}</Text>
+                            <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): '??'}</BoldText>
+                        </div>
                     </div>
-                </div>
-            </Panel>
+                </Panel>
+                <PanelColor className='flex-1'>
+                    <div className="flex items-center justify-around">
+                        <div>
+                            <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}: ????$</Text>
+                            <Button type="primary" size="small" className="mt-2">Claim</Button>
+                        </div>
+                    </div>
+                </PanelColor>
+            </div>
             <Panel>
                 <div className="flex items-center justify-around">
                     <div>
@@ -163,6 +173,9 @@ const SlideWrapper = styled.div`
     padding: 2rem 4rem 2rem 2rem;
     transition: all .3s;
     position: relative;
+    ${({theme}) => theme.md`
+        padding: 2rem;
+    `}
 `
 const Panel = styled.div`
     font-size: 16px;

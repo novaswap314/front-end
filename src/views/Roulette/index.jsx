@@ -92,19 +92,19 @@ const RouletteWheel = () => {
             ? (
               formatList && formatList.map((item, index) => {
                 return <ListItem key={index}>
-                  <PairWrapper>
-                    <Col span={6}>
+                  <PairWrapper className="grid grid-cols-1 lg:grid-cols-4">
+                    <Col>
                       <PairName>{item.symbol} <span>/ {user.currentChainInfo.nativeCurrency.symbol}</span></PairName>
                       <CoinName>{item.name}</CoinName>
                       <CA>{item.liquidityProvider.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</CA>
                     </Col>
-                    <Col span={6} className='flex flex-col items-start justify-center'>
+                    <Col className='flex flex-col items-start justify-center'>
                       <Price>{ETHPrice(item.pool0p, item.pool1p)}</Price>
                     </Col>
-                    <Col span={6} className='flex flex-col items-start justify-center'>
+                    <Col className='flex flex-col items-start justify-center'>
                       <Price>Liq.{formatEther(item.blockToUnlockLiquidity)}</Price>
                     </Col>
-                    <Col span={6} className='flex flex-col items-end justify-center'>
+                    <Col className='flex flex-col items-end justify-center'>
                       <Button type="primary" onClick={() => handleChoosePair(item)}>Swap</Button>
                     </Col>
                   </PairWrapper>
@@ -135,17 +135,11 @@ const Header = styled.div`
   padding: 0 0 12px 0;
   border-bottom: 1px dashed  ${({theme}) => theme.gray3};
 `
-// const ListWrapper = styled(List)`
-//   // border: 1px solid ${({theme}) => theme.gray3};
-//   // border-radius: 16px;
-//   // padding: 12px 24px;
-//   margin-top: 10px;
-// `
 const ListItem = styled.div`
   border-top: 1px dashed  ${({theme}) => theme.gray3};
   padding: 12px 0;
 `
-const PairWrapper = styled(Row)`
+const PairWrapper = styled.div`
   color: white;
   width: 100%;
   text-align: left;

@@ -18,31 +18,6 @@ const metadata = {
     url: 'https://web3modal.com', // origin must match your domain & subdomain
     icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
-
-const DIS = {
-    id: 513100,
-    name: 'DISChain',
-    network: 'DISChain',
-    nativeCurrency: {
-        decimals: 18,
-        name: 'DIS',
-        symbol: 'DIS',
-    },
-    rpcUrls: {
-        default: {
-            http: ['https://rpc.dischain.xyz'],
-        },
-        public: {
-            http: ['https://rpc.dischain.xyz'],
-        },
-    },
-    blockExplorers: {
-        default: {
-            name: 'DISChain Explorer',
-            url: 'https://scan.dischain.xyz',
-        },
-    },
-}
 const BSC = {
     id: 97,
     name: 'BSCChainTest',
@@ -68,7 +43,7 @@ const BSC = {
     },
 }
 
-const chains = [mainnet, arbitrum, DIS, BSC]
+const chains = [mainnet, arbitrum, BSC]
 const config = defaultWagmiConfig({
     chains,
     projectId,
