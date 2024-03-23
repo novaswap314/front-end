@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt, useGasPrice, useEstimateGas } from 'wagmi';
+import React, { Fragment, useState } from 'react';
+import { useWriteContract, useWaitForTransactionReceipt, useGasPrice, useEstimateGas, useBalance, useAccount } from 'wagmi';
 import { useSelector } from 'react-redux';
 import { novaAbi, novaAddress } from '../../constant';
 import { Button, notification } from 'antd';
@@ -8,8 +8,13 @@ import { parseUnits, formatEther } from 'viem'
 
 export default function SwapBuyReck() {
     const [api, contextHolder] = notification.useNotification();
+    const [errorText, setErrorText] = useState('');
     const user = useSelector(state => state.user);
     const { data: gas } = useGasPrice()
+    const { isLoading: balanceLoading, data: balance } = useBalance({
+        address: user.address
+    })
+    console.log('::balance', balance)
 
     const { data: hash, error, isPending, writeContract } = useWriteContract()
 
@@ -31,6 +36,12 @@ export default function SwapBuyReck() {
         let amount = parseUnits(user?.input.inputValue.toString(), 18)
 
         if (user.isBuy) {
+            if (balance.value == 0) {
+                setErrorText('Insufficient balance.')
+                return;
+            } else {
+                setErrorText('')
+            }
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,
@@ -56,6 +67,7 @@ export default function SwapBuyReck() {
             <p className='mt-4'>{error && (
                 <div>Error: {error.shortMessage || error.message}</div>
               )}</p>
+            <p className='mt-4'>{errorText}</p>
         </Fragment>
     )
 }
