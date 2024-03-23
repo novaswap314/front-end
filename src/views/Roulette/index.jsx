@@ -8,6 +8,7 @@ import { userActions } from '../../store/module/user';
 import { novaAbi, novaAddress } from '../../constant';
 import Loading from '../../components/Loading';
 import { debounce } from 'lodash'
+import { formatNumber } from '@/utils'
 
 const RouletteWheel = () => {
   const user = useSelector(state => state.user)
@@ -36,6 +37,9 @@ const RouletteWheel = () => {
         v.totalSupply = v.totalSupply.toString()
         return v
       })
+      if (list?.length > 0 && !user.currentPairInfo) {
+        handleChoosePair(list[0])
+      }
       setFormatList(list)
     }
   }, [ListData])
@@ -47,7 +51,7 @@ const RouletteWheel = () => {
     if (formatPool0 == 0) {
         return 0
     }
-    return formatPool0 / formatPool1
+    return formatNumber(formatPool0 / formatPool1)
   }
 
   const handleChoosePair = (item) => {
@@ -102,7 +106,7 @@ const RouletteWheel = () => {
                       <Price>{ETHPrice(item.pool0p, item.pool1p)}</Price>
                     </Col>
                     <Col className='flex flex-col items-start justify-center'>
-                      <Price>Liq.{formatEther(item.blockToUnlockLiquidity)}</Price>
+                      <Price>Liq.{ formatNumber(formatEther(item.blockToUnlockLiquidity)) }</Price>
                     </Col>
                     <Col className='flex flex-col items-end justify-center'>
                       <Button type="primary" onClick={() => handleChoosePair(item)}>Swap</Button>

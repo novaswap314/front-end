@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Hamburger from "./Hamburger";
 import SwapInput from '@/components/SwapInput'
 import Exchange from '@/components/Icons/Exchange'
-
+import { formatNumber } from '@/utils'
 import { Button } from 'antd';
 import SwapBuyReck from '@/components/WriteContract/SwapBuyReck.jsx'
 import { useDispatch, useSelector } from 'react-redux';
@@ -80,7 +80,7 @@ const Slide = () => {
         if (formatPool0 == 0) {
             return 0
         }
-        return formatPool0 / formatPool1
+        return formatNumber(formatPool0 / formatPool1)
     }
 
     const getInputValue = (value) => {
@@ -113,7 +113,7 @@ const Slide = () => {
                     <div className="flex items-center justify-around">
                         <div>
                             <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}</Text>
-                            <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): '??'}</BoldText>
+                            <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): 'Loading...'}</BoldText>
                         </div>
                     </div>
                 </Panel>
@@ -130,22 +130,22 @@ const Slide = () => {
                 <div className="flex items-center justify-around">
                     <div>
                         <Text>Marketcap</Text>
-                        <BoldText>{ user.currentPairInfo ? formatEther(user.currentPairInfo.pool0p) * 2 : '??' }</BoldText>
+                        <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p) * 2) : 'Loading...' }</BoldText>
                     </div>
                     <div>
                         <Text>Liquidity</Text>
-                        <BoldText>{user.currentPairInfo ? formatEther(user.currentPairInfo.blockToUnlockLiquidity) : '??'}</BoldText>
+                        <BoldText>{user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.blockToUnlockLiquidity)) : 'Loading...'}</BoldText>
                     </div>
                 </div>
             </Panel>
             <Panel>
                 <div className="flex items-center justify-between">
                     <Text>Pooled {user.currentChainInfo?.nativeCurrency.symbol}:</Text>
-                    <BoldText>{ user.currentPairInfo ? formatEther(user.currentPairInfo.pool0p) : '??' }</BoldText>
+                    <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p)) : 'Loading...' }</BoldText>
                 </div>
                 <div className="flex items-center justify-between">
-                    <Text>Pooled {user.currentPairInfo ? user.currentPairInfo.symbol : '??'}:</Text>
-                    <BoldText>{ user.currentPairInfo ? formatEther(user.currentPairInfo.pool1p) : '??' }</BoldText>
+                    <Text>Pooled {user.currentPairInfo ? user.currentPairInfo.symbol : 'Loading...'}:</Text>
+                    <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool1p)) : 'Loading...' }</BoldText>
                 </div>
             </Panel>
             <PanelColor className="mt-10">
