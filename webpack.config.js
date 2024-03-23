@@ -21,7 +21,7 @@ module.exports = (env) => {
         output: {
             // 必须是绝对路径
             path: path.resolve(__dirname, 'dist'), //打包后文件的输出位置
-            filename: 'main.js',  // 打包后的文件名
+            filename: '[name].[contenthash].js',
             clean: true,  // 打包之前清理dist文件夹
             publicPath: '/',
         },
@@ -56,11 +56,14 @@ module.exports = (env) => {
         },
         plugins: [
             new htmlWebpackPlugin({
+                favicon: './public/favicon.ico',
                 template: './public/index.html',  // 生成HTML文件的模板文件
                 filename: 'index.html',  // 生成的HTML文件名
                 inject: 'body'  // <script>标签插入的地方
             }),
-            new MiniCssExtractPlugin(),
+            new MiniCssExtractPlugin({
+                filename: '[name].[contenthash].css'
+            }),
             UnoCSS(),
             new webpack.ProvidePlugin({
                 Buffer: ['buffer', 'Buffer'],

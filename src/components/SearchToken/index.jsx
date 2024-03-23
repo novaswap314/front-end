@@ -11,7 +11,7 @@ import Loading from '../Loading';
 const { Search } = Input;
 
 const SearchToken = ({ getSelectToken }) => {
-    const [inputValue, setInputValue] = useState('0xf506Ec19d64ab3850A52FAEC139D2b2fb071e839');
+    const [inputValue, setInputValue] = useState('0x817872542c8cACE08014a83899829183Bb904D5e');
     const dialog = useDialog()
     const chainId = useChainId()
     const dispatch = useDispatch()
