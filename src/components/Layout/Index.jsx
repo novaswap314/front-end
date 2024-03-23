@@ -64,7 +64,7 @@ const ContentWrapper = styled(Content)`
     padding-top: ${({ theme }) => theme.height};
 `
 const LayoutOne = styled(Layout)`
-    height: '100vh';
+    height: 100vh;
     ${({theme}) => theme.md`
         height: auto;
     `}
