@@ -9,6 +9,7 @@ import { novaAbi, novaAddress } from '../../constant';
 import Loading from '../../components/Loading';
 import { debounce } from 'lodash'
 import { formatNumber } from '@/utils'
+import Chart from '@/components/Charts/default.jsx'
 
 const RouletteWheel = () => {
   const user = useSelector(state => state.user)
@@ -75,15 +76,16 @@ const RouletteWheel = () => {
   
   return (
     <WheelContainer>
-      {/* points */}
-      <PointsWrapper>
+      {/* <PointsWrapper>
         <div className='card__content'></div>
         <div className="blob"></div>
         <div className="blob"></div>
         <div className="blob"></div>
         <div className="blob"></div>
         <div className="points">Points: Coming soon.</div>
-      </PointsWrapper>
+      </PointsWrapper> */}
+
+      <Chart />
 
       <Inner className="mt-5">
         <Header>List</Header>
@@ -129,7 +131,7 @@ const WheelContainer = styled.div`
 `
 const Inner = styled.div`
   border: 1px solid ${({theme}) => theme.gray3};
-  border-radius: 16px;
+  border-radius: ${({theme}) => theme.secondRadius}px;
   padding: 12px 24px;
 `
 const Header = styled.div`
@@ -179,7 +181,7 @@ const PointsWrapper = styled.div`
   // background: rgba(255, 255, 255, .1);
   -webkit-backdrop-filter: blur(25px);
   backdrop-filter: blur(25px);
-  border-radius: 16px;
+  border-radius: ${({theme}) => theme.secondRadius}px;
   background: lightgrey;
   box-shadow: #d11bff42 0 15px 40px -5px;
   z-index: 1;
@@ -196,7 +198,7 @@ const PointsWrapper = styled.div`
     top: 0;
     width: 100%;
     height: 100%;
-    border-radius: 16px;
+    border-radius: ${({theme}) => theme.secondRadius}px;
   }
   .points {
     position: absolute;
@@ -213,7 +215,7 @@ const PointsWrapper = styled.div`
   .blob {
     position: absolute;
     z-index: -1;
-    border-radius: 5em;
+    border-radius: ${({theme}) => theme.secondRadius}px;
     width: 400px;
     height: 400px;
     &:nth-child(2) {

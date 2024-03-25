@@ -4,6 +4,7 @@ import { Web3ModalProvider } from '@/libs/wagmi.js'
 import { ConfigProvider } from 'antd';
 import { theme as getTheme } from "./theme";
 import Home from '@/views/Home/Home.jsx';
+import Launchpad from '@/views/Launchpad/index.jsx';
 import Header from '@/components/Layout/Header.jsx'
 import Enter from '@/views/Enter/index.jsx'
 
@@ -19,15 +20,22 @@ function App() {
                         defaultGhostBorderColor: theme.gray3,
                         primaryColor: '#333',
                     },
+                    Form: {
+                        labelColor: '#efefef',
+                    },
+                    Slider: {
+                        railBg: theme.gray3,
+                        railHoverBg: theme.gray3,
+                        trackBg: theme.colorPrimary,
+                        trackHoverBg: theme.colorPrimary,
+                    }
                 },
                 token: {
                     colorPrimary: theme.colorPrimary,
-                    borderRadius: 8,
+                    borderRadius: theme.primaryRadius,
                     controlHeight: 30, // 按钮和输入框等基础控件的高度
-                    colorBgSpotlight: 'rgba(68, 68, 68, 1)',
                     colorTextDisabled: '#fff',
                     colorTextDescription: '#fff',
-                    colorTextLightSolid: '#444',
                 },
             }}
         >
@@ -37,6 +45,7 @@ function App() {
                         <Header></Header>
                         <Switch>
                             <Route path="/homepage" component={Home} />
+                            <Route path="/launchpad" component={Launchpad} />
                             <Route path="/swap" component={Enter} />
                             <Redirect from='/*' to='/homepage' />
                         </Switch>

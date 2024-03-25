@@ -28,23 +28,19 @@ export function colors(darkMode) {
     gray4: 'hsla(0,0%,100%,.2)',
     gray5: 'hsla(0,0%,100%,.1)',
 
+    // background
+    bg02: '#222',
+
     //primary colors
     colorPrimary: '#a8ff78',
-    primary2: '#FF8CC3',
-    primary3: '#FF99C9',
-    primary4: '#F6DDE8',
-    primary5: '#eaecfd',
 
-    //specialty colors
+    // border radius
+    primaryRadius: 8,
+    secondRadius: 10,
+
+    // slide width
     slideHamWidth: '60px',
     slideWidth: '560px',
-
-    // other
-    red1: '#FF6871',
-    red2: '#F82D3A',
-    green1: '#27AE60',
-    yellow1: '#FFE270',
-    yellow2: '#F3841E',
 
   }
 }

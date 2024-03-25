@@ -6,7 +6,14 @@ import { useSwitchChain } from 'wagmi'
 import { useSelector } from 'react-redux';
 import ConnectWallet from '../ConnectWallet/index.jsx';
 import LogoW from '@/assets/logo.svg';
-import GasStation from '@/components/Icons/GasStation.jsx'
+import TwitterXFill from '@/components/Icons/TwitterXFill.jsx'
+import ArrowRight from '@/components/Icons/ArrowRight.jsx'
+
+const nav = [
+    { path: '/homepage', label: 'Home' },
+    { path: '/swap', label: 'Swap' },
+    { path: '/launchpad', label: 'Launchpad' },
+]
 
 export const Header = () => {
     const history = useHistory();
@@ -44,7 +51,15 @@ export const Header = () => {
     return(
         <HeaderWrapper>
             <img src={LogoW} className='w-10' />
+            <NavWrapper>
+                {
+                    nav.map((v, i) => {
+                        return <NavLink key={i} to={v.path}>{v.label} {currentPath == v.path ? <ArrowRight className="icon" /> : <></> }</NavLink>
+                    })
+                }
+            </NavWrapper>
             <ButtonWrapper>
+                <a href="https://twitter.com/novaswap_erc" target="_black"><IconsWrapper><TwitterXFill /></IconsWrapper></a>
                 {
                     user.address
                     ? <GasWrapper>
@@ -60,15 +75,47 @@ export const Header = () => {
                         </GasWrapper>
                     : <></>
                 }
-                
                 <ConnectWallet />
             </ButtonWrapper>
         </HeaderWrapper>
     )
 }
 
-const IconsWrapper = styled(GasStation)`
-    // font-size: 1.2rem;
+const NavWrapper = styled.nav`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    > a {
+        font-size: 1rem;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        position: relative;
+        .icon {
+            position: absolute;
+            font-size: 12px;
+            color: ${({theme}) => theme.colorPrimary};
+            left: 50%;
+            bottom: -12px;
+            transform: translateX(-50%) rotate(-90deg);
+        }
+    }
+`
+
+const IconsWrapper = styled.div`
+    width: 29px;
+    height: 29px;
+    border-radius: ${({theme}) => theme.primaryRadius}px;
+    border: 1px solid ${({theme}) => theme.gray3};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${({theme}) => theme.text2};
+    font-size: 16px;
+    &:hover {
+        color: white;
+    }
 `
 
 const HeaderWrapper = styled.header`

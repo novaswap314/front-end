@@ -59,7 +59,7 @@ const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
     return (
         <Wrapper>
             <InputWrapper>
-                <Input disabled={type === 'output'} value={number} onChange={(e) => swapInputChange(e.target.value)} className='text-white flex-1' placeholder="Borderless" variant="borderless" />
+                <Input disabled={type === 'output'} value={number} onChange={(e) => swapInputChange(e.target.value)} className='text-white flex-1' placeholder="0.0" variant="borderless" />
                 <div className='text-right'>
                     {
                         currentChainInfo.nativeCurrency.symbol === tokenInfo.symbol // 当前链主币

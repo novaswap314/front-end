@@ -1,19 +1,14 @@
-import React,{ useState, useEffect, useCallback } from "react";
-import styled, { css } from "styled-components";
-
+import React,{ useState } from "react";
+import styled from "styled-components";
 import { DialogProvider } from '@/components/Dialog/hook';
 import { Layout } from 'antd';
 import { useSelector, useDispatch } from "react-redux";
-import { globalActions } from '@/store/module/global';
 import { theme as getTheme } from "../../theme";
 const { Sider, Content } = Layout;
 
 const Index = ({ siderChildren, contentChildren }) => {
-    const global = useSelector(state => state.global)
-    const dispatch = useDispatch()
-    const theme = getTheme()
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+    
+    // const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     // const handleResize = useCallback(() => {
     //     if (window.innerWidth < theme.mdw && !global.isHamburger) {
     //         dispatch(globalActions.setHamburger(true))

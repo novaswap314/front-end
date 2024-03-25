@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Hamburger from "./Hamburger";
 import SwapInput from '@/components/SwapInput'
 import Exchange from '@/components/Icons/Exchange'
-import { formatNumber } from '@/utils'
-import { Button } from 'antd';
 import SwapBuyReck from '@/components/WriteContract/SwapBuyReck.jsx'
 import { useDispatch, useSelector } from 'react-redux';
-import { formatEther } from 'viem'
-import { useBalance, useAccount, useReadContract, useWriteContract, useSimulateContract } from 'wagmi'
-import { erc20Abi, parseUnits } from 'viem'
+import { formatEther, parseUnits } from 'viem'
+import { useBalance, useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { formatNumber } from '@/utils'
+import { Button } from 'antd';
 import { userActions } from '@/store/module/user';
 import { novaAbi, novaAddress } from "../../../constant";
 
@@ -182,7 +181,7 @@ const Panel = styled.div`
     color: ${({theme}) => theme.text2};
     overflow: hidden;
     border: 1px solid ${({theme}) => theme.gray3};
-    border-radius: 16px;
+    border-radius: ${({theme}) => theme.secondRadius}px;
     padding: 12px 24px;
     text-align: center;
     margin-bottom: 16px;
@@ -192,7 +191,7 @@ const PanelColor = styled.div`
     color: ${({theme}) => theme.text2};
     overflow: hidden;
     border: 1px solid ${({theme}) => theme.colorPrimary};
-    border-radius: 16px;
+    border-radius: ${({theme}) => theme.secondRadius}px;
     padding: 12px 24px;
     text-align: center;
     margin-bottom: 16px;
