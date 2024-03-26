@@ -254,7 +254,7 @@ const LaunchpadWrapper = styled.div`
 `;
 
 const InnerWrapper = styled.div`
-  margin: 30px auto;
+  margin: 30px auto 0;
   max-width: 1000px;
   ${({ theme }) => theme.md`
   

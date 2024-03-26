@@ -3,18 +3,24 @@ import styled from 'styled-components';
 import Loading from '@/components/Loading';
 import { novaAbi, novaAddress } from '../../../constant';
 import { useReadContract } from 'wagmi';
-import { Button } from 'antd';
+import { Button, Form, Input } from 'antd';
 
 export default function Token({ item }) {
-    console.log('item>', item)
+    const [form] = Form.useForm();
     const { isLoading, data } = useReadContract({
         abi: novaAbi,
         address: novaAddress,
         functionName: 'getTokenInfo',
         args: [item?.returnValues.contractAddr]
     })
+    
+    const onFinish = (values) => {
+        console.log("values:", values);
+    }
 
-    console.log('data:::::', isLoading, data)
+    const onFinishFailed = () => {
+
+    }
 
     return(
         <List>
@@ -30,7 +36,46 @@ export default function Token({ item }) {
                             <div>{data.totalSupply.toString()}</div>
                             <div className="flex gap-x-2 text-right">
                                 {!data.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
-                                {!data.liquidityAdded && <Button type="primary" size="small">Add Liquidity</Button>}
+                                {/* {!data.liquidityAdded && <Button type="primary" size="small">Add Liquidity</Button>} */}
+                                {!data.liquidityAdded && 
+                                    <FormWrapper
+                                        form={form}
+                                        name="validate"
+                                        layout="vertical"
+                                        onFinish={onFinish}
+                                        onFinishFailed={onFinishFailed}
+                                        autoComplete="off"
+                                    >
+                                        <Form.Item
+                                            name="height"
+                                            style={ItemStyle}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Block height",
+                                                },
+                                            ]}
+                                        >
+                                            <Input style={InputStyle} placeholder='Block height' />
+                                        </Form.Item>
+                                        <Form.Item
+                                            name="amount"
+                                            style={ItemStyle}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Amount",
+                                                },
+                                            ]}
+                                        >
+                                            <Input style={InputStyle} placeholder='Amount'/>
+                                        </Form.Item>
+                
+                                        <Form.Item>
+                                            <Button className="ml-auto block" type="primary" size="small" htmlType="submit">Add Liquidity</Button>
+                                        </Form.Item>
+                                    </FormWrapper>
+                                }
                             </div>
                         </div>
                     </>
@@ -47,3 +92,14 @@ const List = styled.div`
     border-top: 1px dashed ${({theme}) => theme.gray3};
     padding: 12px 0;
 `
+const FormWrapper = styled(Form)`
+
+`;
+
+const InputStyle = {
+    lineHeight: '1.2',
+}
+const ItemStyle = {
+    marginBottom: '0px',
+    marginTop: '-3px',
+}
