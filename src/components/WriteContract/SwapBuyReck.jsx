@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt, useGasPrice, useEstimateGas, useAccount } from 'wagmi';
 import { useSelector } from 'react-redux';
 import { novaAbi, novaAddress } from '../../constant';
-import { Button, notification } from 'antd';
+import { Button, notification, List } from 'antd';
 import styled from 'styled-components';
 import { parseUnits, parseEther, parseGwei } from 'viem'
 

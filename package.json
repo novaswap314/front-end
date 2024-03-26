@@ -82,6 +82,7 @@
     "varuint-bitcoin": "^1.1.2",
     "viem": "^2.8.18",
     "wagmi": "2.x",
+    "web3": "^4.6.0",
     "webpack-node-externals": "^3.0.0"
   }
 }

@@ -29,10 +29,10 @@ const BSC = {
     },
     rpcUrls: {
         default: {
-            http: ['https://data-seed-prebsc-2-s2.binance.org:8545'],
+            http: ['https://bsc-dataseed3.ninicoin.io'],
         },
         public: {
-            http: ['https://data-seed-prebsc-2-s2.binance.org:8545'],
+            http: ['https://bsc-dataseed3.ninicoin.io'],
         },
     },
     blockExplorers: {
