@@ -50,28 +50,21 @@ export default function Launchpad() {
             data: deployContractMethod.encodeABI(),
             gas: gasEstimate
         };
-        
-        web3.eth.sendTransaction(tx).then(v=> {
-            console.log('发送交易结果', v)
-        }).catch(e => {
-            console.log('弹出钱包错误', e)
-        })
 
-        // const txHash = await web3.eth.sendTransaction(tx);
-        // const txHash = "0x00199903981"
-        // const getReceipt = async (hash) => {
-        //     const receipt = await web3.eth.getTransactionReceipt(hash);
-        //     if (receipt) {
-        //       if (receipt.status === true) {
-        //         console.log('Transaction success: ', receipt);
-        //       } else {
-        //         console.log('Transaction failed: ', receipt);
-        //       }
-        //     } else {
-        //       setTimeout(() => getReceipt(hash), 2000);
-        //     }
-        // };
-        // getReceipt(txHash);
+        const txHash = await web3.eth.sendTransaction(tx);
+        const getReceipt = async (hash) => {
+            const receipt = await web3.eth.getTransactionReceipt(hash);
+            if (receipt) {
+              if (receipt.status === true) {
+                console.log('Transaction success: ', receipt);
+              } else {
+                console.log('Transaction failed: ', receipt);
+              }
+            } else {
+              setTimeout(() => getReceipt(hash), 2000);
+            }
+        };
+        getReceipt(txHash);
     };
 
     const onFinishFailed = (errorInfo) => {
