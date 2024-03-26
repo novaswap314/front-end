@@ -18,20 +18,24 @@ export default function Token({ item }) {
 
     return(
         <List>
-            <div>CA: {item.address.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</div>
-            <div></div>
-            <div className="ml-auto flex gap-x-2">
-                {
-                    isLoading
-                    ? <Loading />
-                    : (
-                        <>
-                            {!data.tradingEnable && <Button type="primary">No Trade</Button>}
-                            {!data.liquidityAdded && <Button type="primary">Add Liquidity</Button>}
-                        </>
-                    )
-                }
-            </div>
+            {
+                isLoading
+                ? <Loading />
+                : (
+                    <>
+                        <div className='grid md:grid-cols-5 flex-1 text-center'>
+                            <div>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</div>
+                            <div>{data.name}</div>
+                            <div>{data.symbol}</div>
+                            <div>{data.totalSupply.toString()}</div>
+                            <div className="flex gap-x-2 text-right">
+                                {!data.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
+                                {!data.liquidityAdded && <Button type="primary" size="small">Add Liquidity</Button>}
+                            </div>
+                        </div>
+                    </>
+                )
+            }
         </List>
     )
 }

@@ -212,9 +212,20 @@ export default function Launchpad() {
                                 ? <div className="text-center"><Loading/></div> 
                                 : (
                                     allEvents && allEvents.length > 0
-                                    ? allEvents.map((item,index) => {
-                                        return <Token key={index} item={item} />
-                                    })
+                                    ? (
+                                        <>
+                                            <div className='grid md:grid-cols-5 flex-1 font-bold text-center py-3'>
+                                                <div>CA</div>
+                                                <div>NAME</div>
+                                                <div>SYMBOL</div>
+                                                <div>TotalSupply</div>
+                                                <div></div>
+                                            </div>
+                                            {allEvents.map((item,index) => {
+                                                return <Token key={index} item={item} />
+                                            })}
+                                        </>
+                                    )
                                     : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                 )
                             }
@@ -228,6 +239,12 @@ export default function Launchpad() {
 
 const ListWrapper = styled.div`
 
+`
+const Header = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
 `
 
 const LaunchpadWrapper = styled.div`
