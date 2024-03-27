@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, List, Col, Row, Empty } from 'antd';
+import { Button, Col, Empty } from 'antd';
 import { useReadContract } from 'wagmi';
 import { formatEther } from 'viem'
 import { useSelector, useDispatch } from 'react-redux';
@@ -88,7 +88,12 @@ const RouletteWheel = () => {
       <Chart />
 
       <Inner className="mt-5">
-        <Header>List</Header>
+        <Header className="grid grid-cols-1 lg:grid-cols-4">
+          <Col>NAME</Col>
+          <Col>PRICE</Col>
+          <Col>LIQUIDITY</Col>
+          <Col></Col>
+        </Header>
         {
           isLoading || listLoading
           ? <Loading/>
@@ -128,11 +133,19 @@ const RouletteWheel = () => {
 
 const WheelContainer = styled.div`
   padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
 `
 const Inner = styled.div`
   border: 1px solid ${({theme}) => theme.gray3};
   border-radius: ${({theme}) => theme.secondRadius}px;
   padding: 12px 24px;
+  width: 100%;
+  flex: 1;
+  overflow-y: scroll;
 `
 const Header = styled.div`
   font-size: 18px;

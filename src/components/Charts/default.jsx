@@ -60,5 +60,5 @@ const ChartWrapper = styled.div`
   width: 100%;
   border-radius: ${({ theme }) => theme.secondRadius}px;
   overflow: hidden;
-  height: 400px;
+  height: 300px;
 `;

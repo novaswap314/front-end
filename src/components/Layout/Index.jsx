@@ -57,6 +57,7 @@ const SlideWrapper = styled(Sider)`
 `
 const ContentWrapper = styled(Content)`
     padding-top: ${({ theme }) => theme.height};
+    height: calc(100vh);
 `
 const LayoutOne = styled(Layout)`
     height: 100vh;

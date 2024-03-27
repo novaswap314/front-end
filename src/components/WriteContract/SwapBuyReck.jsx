@@ -18,8 +18,6 @@ export default function SwapBuyReck() {
         value: parseEther(user?.input.inputValue.toString()),
     })
 
-    console.log('gasData::::::', error)
-
     const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
          hash,
     })
@@ -52,7 +50,7 @@ export default function SwapBuyReck() {
                 address: novaAddress,
                 functionName: 'swapSellReck',
                 args: [user.currentPairInfo?.tokenAddress, amount],
-                gas: gasData,
+                gasPrice: gas,
             })
         }
     }
