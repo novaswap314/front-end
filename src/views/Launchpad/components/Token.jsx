@@ -11,7 +11,7 @@ const standardABI = [{"inputs":[{"internalType":"address","name":"_owner_","type
 export default function Token({ item }) {
     const [form] = Form.useForm();
     const { data: gasPrice } = useGasPrice()
-    const { address } = useAccount()
+    const { address, chain } = useAccount()
     const [api, contextHolder] = notification.useNotification();
 
     const { isLoading, data } = useReadContract({
@@ -95,7 +95,7 @@ export default function Token({ item }) {
                         <>
                             <div className='grid md:grid-cols-5 flex-1 text-center'>
                                 <div>
-                                    <a target='_blank' className='text-white' href={ `https://testnet.bscscan.com/address/` + item?.returnValues.contractAddr }>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
+                                    <a target='_blank' className='text-white' href={ chain?.blockExplorers.default.url + '/address/' + item?.returnValues.contractAddr }>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
                                     <CopyWrapper onClick={() => copyCA(item?.returnValues.contractAddr)} />
                                 </div>
                                 <div>{data.name}</div>

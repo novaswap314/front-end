@@ -37,8 +37,8 @@ const BSC = {
     },
     blockExplorers: {
         default: {
-            name: 'DISChain Explorer',
-            url: 'https://scan.dischain.xyz',
+            name: 'bsc Explorer',
+            url: 'https://testnet.bscscan.com',
         },
     },
 }
