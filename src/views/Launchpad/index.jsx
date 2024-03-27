@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import styled from "styled-components";
 import Web3 from 'web3';
 import { Button, Form, Input, Row, Col, Slider, Empty, notification } from "antd";
@@ -21,6 +21,7 @@ export default function Launchpad() {
     const [allEvents, setAllEvents] = useState([])
     const [listLoading, setListLoading] = useState(true)
     const [api, contextHolder] = notification.useNotification();
+    const formLaunch = useRef()
     const { data: gasPrice } = useGasPrice()
     const { address } = useAccount()
 
@@ -114,6 +115,9 @@ export default function Launchpad() {
 
     useEffect(() => {
         getDeployedList()
+        formLaunch.current.setFieldsValue({
+            fee: 0, // fee 的默认值 0
+        })
     }, []);
 
     return (
@@ -122,6 +126,7 @@ export default function Launchpad() {
             <LaunchpadWrapper>
                 <InnerWrapper>
                     <FormWrapper
+                        ref={formLaunch}
                         form={form}
                         name="validateOnly"
                         layout="vertical"
@@ -179,11 +184,6 @@ export default function Launchpad() {
                         <Form.Item
                             label="Fee (0% to 5%):"
                             name="fee"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
                         >
                             <Slider max={5}/>
                         </Form.Item>
