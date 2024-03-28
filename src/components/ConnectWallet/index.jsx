@@ -47,7 +47,8 @@ export default function ConnectWallet() {
             dispatch(userActions.setCurrentChainInfo({
                 id: chain.id,
                 name: chain.name,
-                nativeCurrency: chain.nativeCurrency
+                nativeCurrency: chain.nativeCurrency,
+                blockExplorers: chain.blockExplorers
             }))
         }
     }, [status, chain, address])

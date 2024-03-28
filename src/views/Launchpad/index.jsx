@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import styled from "styled-components";
 import Web3 from 'web3';
-import { Button, Form, Input, Row, Col, Slider, Empty, notification } from "antd";
+import { Button, Form, Input, Row, Col, Slider, Empty, notification, InputNumber } from "antd";
 import { useAccount, useGasPrice } from 'wagmi'
 import Loading from '@/components/Loading';
 import Token from './components/Token'
@@ -20,6 +20,7 @@ export default function Launchpad() {
     const [form] = Form.useForm();
     const [allEvents, setAllEvents] = useState([])
     const [listLoading, setListLoading] = useState(true)
+    const [submitLoading, setSubmitLoading] = useState(false)
     const [api, contextHolder] = notification.useNotification();
     const formLaunch = useRef()
     const { data: gasPrice } = useGasPrice()
@@ -54,6 +55,8 @@ export default function Launchpad() {
         //     gas
         // };
 
+        setSubmitLoading(true)
+
         //compute max wallet
         let maxPerWallet = BigInt(values.max) * BigInt(values.supply) * BigInt(10 ** 16)
 
@@ -64,34 +67,41 @@ export default function Launchpad() {
         console.log('bytecodehash:', web3.utils.keccak256(standardBytecode))
         console.log('parameters:', constructorArgs, [address, values.name, values.ticker, values.supply, maxPerWallet])
 
-        const deployContractMethod = factoryContract.methods.deployContract(standardBytecode, constructorArgs);
-        const gasEstimate = await deployContractMethod.estimateGas({ from: address });
-        console.log('gasEstimate', gasEstimate, gasPrice)
-        // 发送交易
-        const tx = {
-            from: address,
-            to: factoryContractAddress,
-            data: deployContractMethod.encodeABI(),
-            gas: gasEstimate,
-            gasPrice: gasPrice.toString(),
-        };
-
-        const txHash = await web3.eth.sendTransaction(tx);
-        const getReceipt = async (hash) => {
-            const receipt = await web3.eth.getTransactionReceipt(hash);
-            if (receipt) {
-              if (receipt.status === true) {
-                openNotificationSuccess(`'Transaction success: ${receipt}`)
-                console.log('Transaction success: ', receipt);
-              } else {
-                openNotificationError(`Transaction failed: ${receipt}`)
-                console.log('Transaction failed: ', receipt);
-              }
-            } else {
-              setTimeout(() => getReceipt(hash), 2000);
-            }
-        };
-        getReceipt(txHash);
+        try {
+            const deployContractMethod = factoryContract.methods.deployContract(standardBytecode, constructorArgs);
+            const gasEstimate = await deployContractMethod.estimateGas({ from: address });
+            console.log('gasEstimate', gasEstimate, gasPrice)
+            // 发送交易
+            const tx = {
+                from: address,
+                to: factoryContractAddress,
+                data: deployContractMethod.encodeABI(),
+                gas: gasEstimate,
+                gasPrice: gasPrice.toString(),
+            };
+    
+            const txHash = await web3.eth.sendTransaction(tx);
+            const getReceipt = async (hash) => {
+                const receipt = await web3.eth.getTransactionReceipt(hash);
+                if (receipt) {
+                    if (receipt.status === true) {
+                        openNotificationSuccess(`'Transaction success: ${receipt}`)
+                        setSubmitLoading(false)
+                        console.log('Transaction success: ', receipt);
+                    } else {
+                        openNotificationError(`Transaction failed: ${receipt}`)
+                        setSubmitLoading(false)
+                        console.log('Transaction failed: ', receipt);
+                    }
+                } else {
+                  setTimeout(() => getReceipt(hash), 2000);
+                }
+            };
+            getReceipt(txHash);
+        } catch (err) {
+            openNotificationError(err?.message || 'Please try again later.')
+            setSubmitLoading(false)
+        }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -119,7 +129,7 @@ export default function Launchpad() {
     useEffect(() => {
         getDeployedList()
         formLaunch.current.setFieldsValue({
-            fee: 0, // fee 的默认值 0
+            decimals: 18, // decimals 的默认值 0
         })
     }, []);
 
@@ -151,7 +161,7 @@ export default function Launchpad() {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder="Please input the name."/>
                                 </Form.Item>
                             </Col>
 
@@ -166,30 +176,52 @@ export default function Launchpad() {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder="Please input the ticker. eg: BTC/ETH/BSC"/>
                                 </Form.Item>
                             </Col>
                         </Row>
 
-                        <Form.Item
-                            label="Supply"
-                            name="supply"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input the supply",
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Supply"
+                                    name="supply"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please input the supply",
+                                        },
+                                        () => ({
+                                            validator(_, value) {
+                                                if (!/^\d+$/.test(value)) {
+                                                    return Promise.reject(new Error('Please enter valid numbers!'));
+                                                }
+                                                return Promise.resolve();
+                                            },
+                                        }),
+                                    ]}
+                                >
+                                    <Input placeholder="Please input the supply."/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Decimals"
+                                    name="decimals"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please input the decimals.",
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber min={1} max={99} style={{ width: '100%'}}/>
+                                    {/* <Input placeholder="Please input the decimals."/> */}
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
                         
-                        <Form.Item
-                            label="Fee (0% to 5%):"
-                            name="fee"
-                        >
-                            <Slider max={5}/>
-                        </Form.Item>
 
                         <Form.Item
                             label="Max wallet (1% to 100%):"
@@ -204,7 +236,7 @@ export default function Launchpad() {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button className="ml-auto block" type="primary" size="large" htmlType="submit">Submit</Button>
+                            <Button loading={submitLoading} className="ml-auto block" type="primary" size="large" htmlType="submit">Submit</Button>
                         </Form.Item>
                     </FormWrapper>
                     <MytokenWrapper>

@@ -89,9 +89,9 @@ const RouletteWheel = () => {
 
       <Inner className="mt-5">
         <Header className="grid grid-cols-1 lg:grid-cols-4">
-          <Col>NAME</Col>
-          <Col>PRICE</Col>
-          <Col>LIQUIDITY</Col>
+          <Col className='text-left'>NAME</Col>
+          <Col className='text-left'>PRICE</Col>
+          <Col className='text-left'>LIQUIDITY</Col>
           <Col></Col>
         </Header>
         {
@@ -107,7 +107,7 @@ const RouletteWheel = () => {
                     <Col>
                       <PairName>{item.symbol} <span>/ {user.currentChainInfo.nativeCurrency.symbol}</span></PairName>
                       <CoinName>{item.name}</CoinName>
-                      <CA>{item.liquidityProvider.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</CA>
+                      <CA><a target='_blank' className='text-white underline' href={ user?.currentChainInfo?.blockExplorers.default.url + '/address/' + item.liquidityProvider }>{item.liquidityProvider.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a></CA>
                     </Col>
                     <Col className='flex flex-col items-start justify-center'>
                       <Price>{ETHPrice(item.pool0p, item.pool1p)}</Price>

@@ -5,17 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { novaAddress, novaAbi } from '@/constant';
 import { useReadContract, useChainId } from 'wagmi';
 import { userActions } from '../../store/module/user';
+import { debounce } from 'lodash';
 import { useDialog } from '../Dialog/hook';
 import Loading from '../Loading';
 
 const { Search } = Input;
 
 const SearchToken = ({ getSelectToken }) => {
-    const [inputValue, setInputValue] = useState('0x817872542c8cACE08014a83899829183Bb904D5e');
+    const [inputValue, setInputValue] = useState('');
     const dialog = useDialog()
     const chainId = useChainId()
     const dispatch = useDispatch()
-
+    
     const { isLoading, data, error } = useReadContract({
         address: novaAddress,
         abi: novaAbi,
@@ -23,19 +24,17 @@ const SearchToken = ({ getSelectToken }) => {
         args: [inputValue]
     })
 
-    console.log('data>>', isLoading, data, error)
-
     const onSearch = async (e) => {
         setInputValue(e);
     };
 
-    const onInputChang = (e) => {
+    const onInputChang = debounce((e) => {
         setInputValue(e.target.value);
-    };
+    }, 100) 
 
-    const onPressEnter = (e) => {
-        readContract(inputValue);
-    };
+    const onPressEnter = () => {
+
+    }
 
     const searchConfirm = () => {
         if (data && data.name) {
@@ -55,12 +54,11 @@ const SearchToken = ({ getSelectToken }) => {
     return (
         <div>
             <Search
-                placeholder='Search name or paste address' 
+                placeholder='Paste address' 
                 value={inputValue}
                 onSearch={(e) => onSearch(e)}
                 onChange={(e) => onInputChang(e)} 
                 size='large'
-                onPressEnter={onPressEnter}
                 enterButton="Search"
                 loading={isLoading}
             />

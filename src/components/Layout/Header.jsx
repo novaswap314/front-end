@@ -50,7 +50,7 @@ export const Header = () => {
 
     return(
         <HeaderWrapper>
-            <img src={LogoW} className='w-10' />
+            <NavLink to="/"><img src={LogoW} className='w-10' /></NavLink>
             <NavWrapper>
                 {
                     nav.map((v, i) => {

@@ -1,6 +1,6 @@
 export function formatNumber(number) {
     // 将数字转换为字符串
-    const str = String(number);
+    const str = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 21 }).format(number)
 
     // 如果字符串包含小数点
     if (str.includes('.')) {
@@ -12,16 +12,12 @@ export function formatNumber(number) {
         // 处理小数部分
         let formattedDecimal = '';
         if (decimalPart) {
-            if (decimalPart.match(/^0+/)) {
+            if (decimalPart.match(/^0{3,}/)) {
                 // 获取小数部分中连续的零的数量
-                const zeroCount = decimalPart.match(/^0+/)[0].length;
+                const zeroCount = decimalPart.match(/^0{3,}/)[0].length;
                 formattedDecimal = `.0{${zeroCount}}${decimalPart.slice(zeroCount, zeroCount+4)}`;
             } else {
-                if (decimalPart.indexOf('e') > 0) {
-                    formattedDecimal = `.${decimalPart.replace(/^(\d{4})\d*(e-[0-9]+)$/, "$1$2")}`;
-                } else {
-                    formattedDecimal = `.${decimalPart.slice(0, 4)}`;
-                }
+                formattedDecimal = `.${decimalPart.slice(0, 4)}`;
             }
         }
 
