@@ -59,13 +59,14 @@ export default function Launchpad() {
 
         //compute max wallet
         let maxPerWallet = BigInt(values.max) * BigInt(values.supply) * BigInt(10 ** 16)
+        let maxSupply = BigInt(values.supply) * BigInt(10 ** Number(values.decimals));
 
         const constructorArgs = web3.eth.abi.encodeParameters(
             ['address', 'string', 'string', 'uint256', 'uint256'],
-            [address.toString(), values.name, values.ticker, values.supply, maxPerWallet]
+            [address.toString(), values.name, values.ticker, maxSupply, maxPerWallet]
           );
         console.log('bytecodehash:', web3.utils.keccak256(standardBytecode))
-        console.log('parameters:', constructorArgs, [address, values.name, values.ticker, values.supply, maxPerWallet])
+        console.log('parameters:', constructorArgs, [address, values.name, values.ticker, maxSupply, maxPerWallet])
 
         try {
             const deployContractMethod = factoryContract.methods.deployContract(standardBytecode, constructorArgs);
