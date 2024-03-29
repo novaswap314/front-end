@@ -1,6 +1,8 @@
 import React, {useEffect, useState, useRef} from "react";
 import styled from "styled-components";
 import Web3 from 'web3';
+import { useSelector } from "react-redux";
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Button, Form, Input, Row, Col, Slider, Empty, notification, InputNumber } from "antd";
 import { useAccount, useGasPrice } from 'wagmi'
 import Loading from '@/components/Loading';
@@ -22,7 +24,9 @@ export default function Launchpad() {
     const [listLoading, setListLoading] = useState(true)
     const [submitLoading, setSubmitLoading] = useState(false)
     const [api, contextHolder] = notification.useNotification();
+    const user = useSelector(state => state.user)
     const formLaunch = useRef()
+    const { open } = useWeb3Modal()
     const { data: gasPrice } = useGasPrice()
     const { address } = useAccount()
 
@@ -92,11 +96,11 @@ export default function Launchpad() {
             const receipt = await web3.eth.getTransactionReceipt(hash);
             if (receipt) {
                 if (receipt.status === true || receipt.status == 1) {
-                    openNotificationSuccess(`'Transaction success: ${receipt}`)
+                    openNotificationSuccess(`Transaction success`)
                     setSubmitLoading(false)
                     console.log('Transaction success: ', receipt);
                 } else {
-                    openNotificationError(`Transaction failed: ${receipt}`)
+                    openNotificationError(`Transaction failed`)
                     setSubmitLoading(false)
                     console.log('Transaction failed: ', receipt);
                 }
@@ -127,15 +131,20 @@ export default function Launchpad() {
             setListLoading(false)
             openNotificationError(err?.message || 'Please try again later.')
         }
+    }
 
+    const handleOpen = () => {
+        open()
     }
 
     useEffect(() => {
-        getDeployedList()
+        if (user?.address) {
+            getDeployedList()
+        }
         formLaunch.current.setFieldsValue({
             decimals: 18, // decimals 的默认值 0
         })
-    }, []);
+    }, [user?.address]);
 
     return (
         <>
@@ -240,7 +249,12 @@ export default function Launchpad() {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button loading={submitLoading} className="ml-auto block" type="primary" size="large" htmlType="submit">Submit</Button>
+                            {
+                                user?.address
+                                ? <Button loading={submitLoading} className="ml-auto block" type="primary" size="large" htmlType="submit">Submit</Button>
+                                : <Button onClick={() => handleOpen()} className="ml-auto block" type="primary" size="large">Connect Wallet</Button>
+                            }
+                            
                         </Form.Item>
                     </FormWrapper>
                     <MytokenWrapper>

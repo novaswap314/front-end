@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Loading from '@/components/Loading';
 import { novaAbi, novaAddress } from '../../../constant';
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useReadContract, useGasPrice, useAccount } from 'wagmi';
 import { Button, Form, Input, notification } from 'antd';
 import { useSelector } from 'react-redux';
@@ -11,10 +12,12 @@ const standardABI = [{"inputs":[{"internalType":"address","name":"_owner_","type
 
 export default function Token({ item }) {
     const [form] = Form.useForm();
+    const [api, contextHolder] = notification.useNotification();
+    const [submitLoading, setSubmitLoading] = useState(false)
     const { data: gasPrice } = useGasPrice()
     const { address } = useAccount()
+    const { open } = useWeb3Modal()
     const user = useSelector(state => state.user)
-    const [api, contextHolder] = notification.useNotification();
 
     const { isLoading, data } = useReadContract({
         abi: novaAbi,
@@ -38,6 +41,7 @@ export default function Token({ item }) {
     }
     
     const onFinish = async (values) => {
+        setSubmitLoading(true)
         const tokenAddr = item?.returnValues.contractAddr;
         console.log("values:", values, tokenAddr);
         const web3 = new Web3(window.ethereum);
@@ -45,40 +49,51 @@ export default function Token({ item }) {
 
         let coinAmount = web3.utils.toWei(values.amount, 'ether')
 
-        const addLiqMethod = tplContract.methods.addLiquidity(38918947 + 10000000);
-        const gasEstimate = await addLiqMethod.estimateGas({ from: address,  value: coinAmount});
-        console.log('gasEstimate', gasEstimate, gasPrice)
-        // 发送交易
-        const tx = {
-            from: address,
-            to: tokenAddr,
-            data: addLiqMethod.encodeABI(),
-            gas: gasEstimate,
-            gasPrice: gasPrice.toString(),
-            value: coinAmount,
-        };
-        console.log('add liquidity:', tx)
-
-        const txHash = await web3.eth.sendTransaction(tx);
-        const getReceipt = async (hash) => {
-            const receipt = await web3.eth.getTransactionReceipt(hash);
-            if (receipt) {
-              if (receipt.status === true) {
-                openNotificationSuccess(`'Transaction success: ${receipt}`)
-                console.log('Transaction success: ', receipt);
-              } else {
-                openNotificationError(`Transaction failed: ${receipt}`)
-                console.log('Transaction failed: ', receipt);
-              }
-            } else {
-              setTimeout(() => getReceipt(hash), 2000);
-            }
-        };
-        getReceipt(txHash);
+        try {
+            const addLiqMethod = tplContract.methods.addLiquidity(38918947 + 10000000);
+            const gasEstimate = await addLiqMethod.estimateGas({ from: address,  value: coinAmount});
+            console.log('gasEstimate', gasEstimate, gasPrice)
+            // 发送交易
+            const tx = {
+                from: address,
+                to: tokenAddr,
+                data: addLiqMethod.encodeABI(),
+                gas: gasEstimate,
+                gasPrice: gasPrice.toString(),
+                value: coinAmount,
+            };
+            console.log('add liquidity:', tx)
+    
+            const txHash = await web3.eth.sendTransaction(tx);
+            const getReceipt = async (hash) => {
+                const receipt = await web3.eth.getTransactionReceipt(hash);
+                if (receipt) {
+                  if (receipt.status === true || receipt.status == 1) {
+                    openNotificationSuccess(`Transaction success`)
+                    setSubmitLoading(false)
+                    console.log('Transaction success: ', receipt);
+                  } else {
+                    openNotificationError(`Transaction failed`)
+                    setSubmitLoading(false)
+                    console.log('Transaction failed: ', receipt);
+                  }
+                } else {
+                  setTimeout(() => getReceipt(hash), 2000);
+                }
+            };
+            getReceipt(txHash.transactionHash);
+        } catch(err) {
+            setSubmitLoading(false)
+            openNotificationError(err?.message || 'Please try again later.')
+        }
     }
 
     const onFinishFailed = () => {
 
+    }
+
+    const handleOpen = () => {
+        open()
     }
 
     const copyCA = async (message) => {
@@ -141,7 +156,12 @@ export default function Token({ item }) {
                                             </Form.Item>
                     
                                             <Form.Item>
-                                                <Button className="ml-auto block" type="primary" size="small" htmlType="submit">Add Liquidity</Button>
+                                                {
+                                                    user?.address
+                                                    ? <Button loading={submitLoading} className="ml-auto block" type="primary" size="small" htmlType="submit">Add Liquidity</Button>
+                                                    : <Button onClick={() => handleOpen()} className="ml-auto block" type="primary" size="small">Connect Wallet</Button>
+                                                }
+                                                
                                             </Form.Item>
                                         </FormWrapper>
                                     }
