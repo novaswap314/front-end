@@ -7,21 +7,22 @@ import SwapBuyReck from '@/components/WriteContract/SwapBuyReck.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { formatEther, parseUnits } from 'viem'
 import { useBalance, useAccount, useReadContract, useWriteContract } from 'wagmi'
-import { formatNumber } from '@/utils'
-import { Button } from 'antd';
+import { formatNumber, powWithDecimals } from '@/utils'
+import { Button, notification } from 'antd';
 import { userActions } from '@/store/module/user';
 import { novaAbi, novaAddress } from "../../../constant";
 
 const Slide = () => {
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
+    const [api, contextHolder] = notification.useNotification();
     const { writeContract } = useWriteContract()
     const { address } = useAccount()
     const { isLoading, data: balance } = useBalance({
         address: address
     })
 
-    const { isLoading: balanceLoading, data: arc20balance, error } = useReadContract({
+    const { isLoading: balanceLoading, data: readBalance, error } = useReadContract({
         abi: novaAbi,
         address: novaAddress,
         functionName: 'balanceOf',
@@ -38,12 +39,13 @@ const Slide = () => {
 
     useEffect(() => {
         if (!isLoading && balance) {
-            // 默认 input 输入，是当前链的主币种
+            // 当前主网币种
             dispatch(userActions.setInput(
                 { 
-                    balance: balance.value.toString() ,
+                    balance: balance.value.toString(),
                     symbol: balance.symbol,
                     name: balance.symbol,
+                    decimals: balance.decimals.toString(),
                 }
             ))
         }   
@@ -54,7 +56,8 @@ const Slide = () => {
             let put = {
                 name: user.currentPairInfo?.symbol,
                 symbol: user.currentPairInfo?.symbol,
-                balance: arc20balance ? arc20balance[1]?.toString() : 0
+                decimals: user.currentPairInfo.decimals.toString(),
+                balance: readBalance ? readBalance[1].toString() : 0
             }
             if (user.selectType == 'input') {
                 dispatch(userActions.setInput(put))
@@ -62,20 +65,20 @@ const Slide = () => {
                 dispatch(userActions.setOutput(put))
             }
         }
-    }, [user.currentPairInfo, arc20balance])
+    }, [user.currentPairInfo, readBalance])
 
     useEffect(() => {
         if (outData) {
             dispatch(userActions.setOutput({
-                inputValue: formatEther(outData)
+                inputValue: powWithDecimals(outData, user.currentPairInfo.decimals, false)
             }))
         }
     }, [outLoading, outData])
 
     const ETHPrice = (pool0, pool1) => {
         // 0 eth / 1 代币
-        let formatPool0 = formatEther(pool0)
-        let formatPool1 = formatEther(pool1)
+        let formatPool0 = powWithDecimals(pool0, user.currentPairInfo.decimals, false)
+        let formatPool1 = powWithDecimals(pool1, user.currentPairInfo.decimals, false)
         if (formatPool0 == 0) {
             return 0
         }
@@ -103,62 +106,78 @@ const Slide = () => {
         dispatch(userActions.setOutput(originInput))
         dispatch(userActions.setIsBuy(!user.isBuy))
     }
+
+    const onFinish = (v) => {
+        if (v === 'success') {
+            dispatch(userActions.setInput({
+                inputValue: '0',
+            }))
+            dispatch(userActions.setOutput({
+                inputValue: '0',
+            }))
+            api['success']({
+                message: 'Success'
+            });
+        }
+    }
     
     return (
-        <SlideWrapper>
-            {/* price */}
-            <div className="flex gap-4">
-                <Panel className='flex-1'>
+        <>
+            { contextHolder }
+            <SlideWrapper>
+                {/* price */}
+                <div className="flex gap-4">
+                    <Panel className='flex-1'>
+                        <div className="flex items-center justify-around">
+                            <div>
+                                <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}</Text>
+                                <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): 'Loading...'}</BoldText>
+                            </div>
+                        </div>
+                    </Panel>
+                    <Panel className='flex-1'>
+                        <div className="flex items-center justify-around">
+                            <div>
+                                <Text>{user.currentChainInfo?.nativeCurrency.symbol}: ????$</Text>
+                                <Button type="primary" size="small" className="mt-2">Claim</Button>
+                            </div>
+                        </div>
+                    </Panel>
+                </div>
+                <Panel>
                     <div className="flex items-center justify-around">
                         <div>
-                            <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}</Text>
-                            <BoldText>{user.currentPairInfo ? ETHPrice(user.currentPairInfo.pool0p, user.currentPairInfo.pool1p): 'Loading...'}</BoldText>
+                            <Text>Marketcap</Text>
+                            <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p) * 2) : 'Loading...' }</BoldText>
+                        </div>
+                        <div>
+                            <Text>Liquidity</Text>
+                            <BoldText>{user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.blockToUnlockLiquidity)) : 'Loading...'}</BoldText>
                         </div>
                     </div>
                 </Panel>
-                <PanelColor className='flex-1'>
-                    <div className="flex items-center justify-around">
-                        <div>
-                            <Text>Price {user.currentChainInfo?.nativeCurrency.symbol}: ????$</Text>
-                            <Button type="primary" size="small" className="mt-2">Claim</Button>
-                        </div>
+                <Panel>
+                    <div className="flex items-center justify-between">
+                        <Text>Pooled {user.currentChainInfo?.nativeCurrency.symbol}:</Text>
+                        <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p)) : 'Loading...' }</BoldText>
                     </div>
+                    <div className="flex items-center justify-between">
+                        <Text>Pooled {user.currentPairInfo ? user.currentPairInfo.symbol : 'Loading...'}:</Text>
+                        <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool1p)) : 'Loading...' }</BoldText>
+                    </div>
+                </Panel>
+                <PanelColor className="mt-10">
+                    <SwapInput getInputValue={(v) => getInputValue(v)} showMax={true} tokenInfo={user.input} type='input' />
                 </PanelColor>
-            </div>
-            <Panel>
-                <div className="flex items-center justify-around">
-                    <div>
-                        <Text>Marketcap</Text>
-                        <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p) * 2) : 'Loading...' }</BoldText>
-                    </div>
-                    <div>
-                        <Text>Liquidity</Text>
-                        <BoldText>{user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.blockToUnlockLiquidity)) : 'Loading...'}</BoldText>
-                    </div>
-                </div>
-            </Panel>
-            <Panel>
-                <div className="flex items-center justify-between">
-                    <Text>Pooled {user.currentChainInfo?.nativeCurrency.symbol}:</Text>
-                    <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p)) : 'Loading...' }</BoldText>
-                </div>
-                <div className="flex items-center justify-between">
-                    <Text>Pooled {user.currentPairInfo ? user.currentPairInfo.symbol : 'Loading...'}:</Text>
-                    <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool1p)) : 'Loading...' }</BoldText>
-                </div>
-            </Panel>
-            <PanelColor className="mt-10">
-                <SwapInput getInputValue={(v) => getInputValue(v)} showMax={true} tokenInfo={user.input} type='input' />
-            </PanelColor>
-            <ExchangeSwapper>
-                <Exchange onClick={() => handleSwitch()} className="text-2xl"/>
-            </ExchangeSwapper>
-            <PanelColor>
-                <SwapInput getInputValue={(v) => getOutputValue(v)} tokenInfo={user.output} type='output' />
-            </PanelColor>
-            <SwapBuyReck />
-            {/* <HamburgerPosition></HamburgerPosition> */}
-        </SlideWrapper>
+                <ExchangeSwapper>
+                    <Exchange onClick={() => handleSwitch()} className="text-2xl"/>
+                </ExchangeSwapper>
+                <PanelColor>
+                    <SwapInput getInputValue={(v) => getOutputValue(v)} tokenInfo={user.output} type='output' />
+                </PanelColor>
+                <SwapBuyReck onFinish={onFinish}/>
+            </SlideWrapper>
+        </>
     )
 }
 

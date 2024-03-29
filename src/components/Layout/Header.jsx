@@ -2,8 +2,11 @@ import styled, { css } from 'styled-components';
 import { useHistory, NavLink } from 'react-router-dom'
 import React, { useState, useEffect } from 'react';
 import { Button, Dropdown } from 'antd';
-import { useSwitchChain } from 'wagmi'
-import { useSelector } from 'react-redux';
+import { useSwitchChain, useAccount, useChains } from 'wagmi'
+import { useSelector, useDispatch } from 'react-redux';
+import { userActions } from '@/store/module/user';
+import { globalActions } from '@/store/module/global';
+
 import ConnectWallet from '../ConnectWallet/index.jsx';
 import LogoW from '@/assets/logo.svg';
 import TwitterXFill from '@/components/Icons/TwitterXFill.jsx'
@@ -18,8 +21,10 @@ const nav = [
 export const Header = () => {
     const history = useHistory();
     const user = useSelector(state => state.user)
-    const [currentPath, setCurrentPath] = useState(history.location.pathname);
+    const dispatch = useDispatch();
     const { chains, switchChain } = useSwitchChain()
+    const { address, status, isConnecting, chain } = useAccount()
+    const [currentPath, setCurrentPath] = useState(history.location.pathname);
 
     useEffect(() => {
         const unlisten = history.listen((location) => {
@@ -30,6 +35,18 @@ export const Header = () => {
           unlisten(); // 清除监听器，防止内存泄漏
         };
     }, [history]);
+
+    useEffect(() => {
+        checkAddress()
+        if (status == 'connected' && chain) {
+            dispatch(userActions.setCurrentChainInfo({
+                id: chain.id,
+                name: chain.name,
+                nativeCurrency: chain.nativeCurrency,
+                blockExplorers: chain.blockExplorers
+            }))
+        }
+    }, [status, chain, address])
 
     // useEffect(() => {
     //     fetch('https://mempool.space/api/v1/fees/recommended')
@@ -47,6 +64,15 @@ export const Header = () => {
     //             console.error('Error:', error);
     //         });
     // } ,[])
+
+    const checkAddress = async () => {
+        if (address) {
+            dispatch(userActions.setAddress(address));
+            dispatch(globalActions.setConnect(true));
+        }
+    }
+
+    
 
     return(
         <HeaderWrapper>

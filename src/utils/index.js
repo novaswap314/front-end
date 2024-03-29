@@ -26,3 +26,11 @@ export function formatNumber(number) {
 
     return str; // 如果没有小数点，直接返回原字符串
 }
+
+export function powWithDecimals(s, d, format = true) {
+    if (format) {
+        return formatNumber(s.toString() / Math.pow(10, d?.toString()))
+    } else {
+        return s.toString() / Math.pow(10, d?.toString())
+    }
+}

@@ -6,7 +6,7 @@ import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useReadContract, useGasPrice, useAccount } from 'wagmi';
 import { Button, Form, Input, notification } from 'antd';
 import { useSelector } from 'react-redux';
-import { formatNumber } from '@/utils';
+import { powWithDecimals } from '@/utils';
 import Loading from '@/components/Loading';
 import Copy from '@/components/Icons/Copy.jsx'
 
@@ -103,10 +103,6 @@ export default function Token({ item }) {
         openNotificationSuccess('Copyed!')
     }
 
-    const calculateSupply = (supply, decimals) => {
-        return formatNumber(supply / Math.pow(10, decimals))
-    }
-
     return(
         <>
             {contextHolder}
@@ -123,7 +119,7 @@ export default function Token({ item }) {
                                 </div>
                                 <div>{data.name}</div>
                                 <div>{data.symbol}</div>
-                                <div>{calculateSupply(data.totalSupply.toString(), data.decimals.toString())}</div>
+                                <div>{powWithDecimals(data.totalSupply.toString(), data.decimals.toString())}</div>
                                 <div className="flex gap-x-2 text-right">
                                     {!data.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
                                     {!data.liquidityAdded && 

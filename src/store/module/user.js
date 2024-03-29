@@ -8,24 +8,26 @@ export const userSlice = createSlice({
 
     currentChainInfo: {
       id: 1,
-      name: 'ETH Mainnet',
+      name: '',
       nativeCurrency: {
         decimals: 18,
-        name: "ETH",
-        symbol: "ETH"
+        name: "",
+        symbol: ""
       }
     },
     input: {
-      name: 'ETH',
+      name: '',
       balance: 0,
-      symbol: 'ETH',
+      symbol: '',
       inputValue: 0,
+      decimals: 18,
     },
     output: {
       name: '',
       balance: 0,
       symbol: '',
       inputValue: 0,
+      decimals: 18,
     },
     selectType: 'output',
     isBuy: true, // true 买入币 false 卖出币

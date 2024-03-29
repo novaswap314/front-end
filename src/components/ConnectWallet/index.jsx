@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown } from 'antd';
 import { userActions } from '@/store/module/user';
 import { globalActions } from '@/store/module/global';
-import { useAccount, useDisconnect } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 import Disconnect from '@/components/Icons/Disconnect.jsx';
 
 export default function ConnectWallet() {
     const user = useSelector(state => state.user);
     const global = useSelector(state => state.global);
-    const { address, status, isConnecting, chain } = useAccount()
     const { disconnect } = useDisconnect()
     const dispatch = useDispatch();
 
@@ -23,35 +22,9 @@ export default function ConnectWallet() {
 
     const handleDisconnect = () => {
         disconnect()
-        updateAddress('')
-        updateConnect(false)
+        dispatch(userActions.setAddress(''));
+        dispatch(globalActions.setConnect(false));
     }
-
-    const updateAddress = (newAddress) => {
-        dispatch(userActions.setAddress(newAddress));
-    }
-    const updateConnect = (connect) => {
-        dispatch(globalActions.setConnect(connect));
-    }
-
-    const checkAddress = async () => {
-        if (address) {
-            updateAddress(address)
-            updateConnect(true)
-        }
-    }
-
-    useEffect(() => {
-        checkAddress()
-        if (status == 'connected' && chain) {
-            dispatch(userActions.setCurrentChainInfo({
-                id: chain.id,
-                name: chain.name,
-                nativeCurrency: chain.nativeCurrency,
-                blockExplorers: chain.blockExplorers
-            }))
-        }
-    }, [status, chain, address])
 
     return (
         <Fragment>

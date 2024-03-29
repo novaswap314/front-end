@@ -43,7 +43,7 @@ const BSC = {
     },
 }
 
-const chains = [mainnet, arbitrum, BSC]
+const chains = [BSC]
 const config = defaultWagmiConfig({
     chains,
     projectId,
