@@ -29,10 +29,10 @@ const BSC = {
     },
     rpcUrls: {
         default: {
-            http: ['https://bsc-dataseed3.ninicoin.io'],
+            http: ['https://bsc-testnet-rpc.publicnode.com'],
         },
         public: {
-            http: ['https://bsc-dataseed3.ninicoin.io'],
+            http: ['https://bsc-testnet-rpc.publicnode.com'],
         },
     },
     blockExplorers: {

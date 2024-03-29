@@ -97,7 +97,7 @@ export default function Token({ item }) {
                         <>
                             <div className='grid md:grid-cols-5 flex-1 text-center'>
                                 <div>
-                                    <a target='_blank' className='text-white' href={ user?.currentChainInfo?.blockExplorers.default.url + '/address/' + item?.returnValues.contractAddr }>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
+                                    <a target='_blank' className='text-white' href={ user?.currentChainInfo?.blockExplorers?.default?.url + '/address/' + item?.returnValues.contractAddr }>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
                                     <CopyWrapper onClick={() => copyCA(item?.returnValues.contractAddr)} />
                                 </div>
                                 <div>{data.name}</div>

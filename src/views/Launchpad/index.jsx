@@ -79,28 +79,32 @@ export default function Launchpad() {
                 gas: gasEstimate,
                 gasPrice: gasPrice.toString(),
             };
-    
             const txHash = await web3.eth.sendTransaction(tx);
-            const getReceipt = async (hash) => {
-                const receipt = await web3.eth.getTransactionReceipt(hash);
-                if (receipt) {
-                    if (receipt.status === true) {
-                        openNotificationSuccess(`'Transaction success: ${receipt}`)
-                        setSubmitLoading(false)
-                        console.log('Transaction success: ', receipt);
-                    } else {
-                        openNotificationError(`Transaction failed: ${receipt}`)
-                        setSubmitLoading(false)
-                        console.log('Transaction failed: ', receipt);
-                    }
-                } else {
-                  setTimeout(() => getReceipt(hash), 2000);
-                }
-            };
-            getReceipt(txHash);
+            getReceipt(txHash.transactionHash);
         } catch (err) {
             openNotificationError(err?.message || 'Please try again later.')
             setSubmitLoading(false)
+        }
+    };
+
+    const getReceipt = async (hash) => {
+        try {
+            const receipt = await web3.eth.getTransactionReceipt(hash);
+            if (receipt) {
+                if (receipt.status === true || receipt.status == 1) {
+                    openNotificationSuccess(`'Transaction success: ${receipt}`)
+                    setSubmitLoading(false)
+                    console.log('Transaction success: ', receipt);
+                } else {
+                    openNotificationError(`Transaction failed: ${receipt}`)
+                    setSubmitLoading(false)
+                    console.log('Transaction failed: ', receipt);
+                }
+            } else {
+              setTimeout(() => getReceipt(hash), 2000);
+            }
+        } catch (err) {
+            console.log('getReceipt err:', err)
         }
     };
 
@@ -113,7 +117,7 @@ export default function Launchpad() {
         try {
             const allEvents = await factoryContract.getPastEvents('NewDeployed', {
                 filter: { deployer: address },
-                fromBlock: 38930597,
+                fromBlock: 38989113,
                 toBlock: 'latest'
             })
             setAllEvents(allEvents)
