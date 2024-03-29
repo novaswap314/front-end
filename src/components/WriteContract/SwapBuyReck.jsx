@@ -40,13 +40,14 @@ export default function SwapBuyReck({ onFinish }) {
         let amount = parseUnits(user?.input.inputValue.toString(), 18)
 
         if (user.isBuy) {
+            console.log('需要的gas', gas)
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,
                 functionName: 'swapBuyReck',
                 args: [user.currentPairInfo?.tokenAddress],
                 value: amount,
-                gasPrice: gas,
+                // gasPrice: gas,
             })
         } else {
             writeContract({
@@ -54,7 +55,7 @@ export default function SwapBuyReck({ onFinish }) {
                 address: novaAddress,
                 functionName: 'swapSellReck',
                 args: [user.currentPairInfo?.tokenAddress, amount],
-                gasPrice: gas,
+                // gasPrice: gas,
             })
         }
     }
