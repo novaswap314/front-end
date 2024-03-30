@@ -9,7 +9,7 @@ import { formatEther } from 'viem'
 import SearchToken from '../SearchToken'
 import ETH from '@/assets/ETH.svg'
 import Arrow from '@/assets/ArrowDown.svg'
-import { formatNumber, powWithDecimals } from '@/utils'
+import { powWithDecimals } from '@/utils'
 
 const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
     const [number, setNumber] = useState(0);
@@ -38,8 +38,9 @@ const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
     //     setNumber(sanitizedValue)
     // }
 
-    const hangleMax = (val) => {
-        setNumber(val)
+    const hangleMax = (token) => {
+        let formatVal = powWithDecimals(token.balance, token.decimals ?? 18, false)
+        setNumber(formatVal)
     }
 
     useEffect(() => {
@@ -79,7 +80,7 @@ const SwapInput = ({ showMax = false, tokenInfo, type, getInputValue }) => {
                     <div className='flex items-center justify-end gap-1 mt-2'>
                         <Balance>Sold: { powWithDecimals(tokenInfo.balance, tokenInfo.decimals ?? 0) }</Balance>
                         {
-                            showMax ? <Max ghost size="small" onClick={() => hangleMax(formatEther(tokenInfo.balance))}>Max</Max> : <></>
+                            showMax ? <Max ghost size="small" onClick={() => hangleMax(tokenInfo)}>Max</Max> : <></>
                         }
                     </div>
                 </div>

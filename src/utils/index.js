@@ -28,9 +28,31 @@ export function formatNumber(number) {
 }
 
 export function powWithDecimals(s, d, format = true) {
+    let cal = s.toString() / Math.pow(10, d?.toString())
     if (format) {
-        return formatNumber(s.toString() / Math.pow(10, d?.toString()))
+        return formatNumber(cal)
     } else {
-        return s.toString() / Math.pow(10, d?.toString())
+        return new Intl.NumberFormat('en-US', { maximumSignificantDigits: 21 }).format(cal).replace(/\,/g, '')
     }
+}
+
+export function convertScientificToDecimal(value) {
+    // 将科学技术法表示的值转换为字符串
+    const valueStr = value.toString();
+
+    // 获取指数部分
+    const exponent = parseInt(valueStr.split('e')[1]);
+
+    // 获取小数部分
+    const decimalPart = parseFloat(valueStr.split('e')[0]);
+
+    // 使用指数部分和小数部分构建小数形式的字符串
+    let result = '0.' + '0'.repeat(Math.abs(exponent) - 1) + decimalPart.toFixed(Math.abs(exponent)).replace('.', '');
+
+    // 如果指数为负数，补充前导零
+    if (exponent < 0) {
+        result = '0.' + '0'.repeat(Math.abs(exponent) - 1) + decimalPart.toFixed(Math.abs(exponent)).replace('.', '');
+    }
+
+    return result;
 }

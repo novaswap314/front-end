@@ -7,10 +7,11 @@ import SwapBuyReck from '@/components/WriteContract/SwapBuyReck.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { formatEther, parseUnits } from 'viem'
 import { useBalance, useAccount, useReadContract, useWriteContract } from 'wagmi'
-import { formatNumber, powWithDecimals } from '@/utils'
+import { formatNumber, powWithDecimals, convertScientificToDecimal } from '@/utils'
 import { Button, notification } from 'antd';
 import { userActions } from '@/store/module/user';
 import { novaAbi, novaAddress } from "../../../constant";
+import Copy from '@/components/Icons/Copy.jsx'
 
 const Slide = () => {
     const user = useSelector(state => state.user);
@@ -34,7 +35,7 @@ const Slide = () => {
         abi: novaAbi,
         address: novaAddress,
         functionName: user.isBuy ? 'routeBuyOut' : 'routeSellOut',
-        args: [user.currentPairInfo?.tokenAddress, parseUnits(user?.input.inputValue.toString(), 18)]
+        args: [user.currentPairInfo?.tokenAddress, parseUnits(user?.input.inputValue.toString(), user.currentPairInfo?.decimals)]
     })
 
     useEffect(() => {
@@ -120,11 +121,30 @@ const Slide = () => {
             });
         }
     }
+
+    const copyCA = async (message) => {
+        await navigator.clipboard.writeText(message)
+        api['success']({
+            message: 'Copyed!',
+            duration: 2
+        });
+    }
     
     return (
         <>
             { contextHolder }
             <SlideWrapper>
+                {
+                    user.currentPairInfo
+                    ? (
+                        <div className="flex items-center pb-4">
+                            <b className="pr-3">Name: {user.currentPairInfo.name}</b>
+                            <span>{user.currentPairInfo.ca.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</span>
+                            <CopyWrapper onClick={() => copyCA(user.currentPairInfo.ca)} />
+                        </div>
+                    )
+                    : <></>
+                }
                 {/* price */}
                 <div className="flex gap-4">
                     <Panel className='flex-1'>
@@ -180,6 +200,12 @@ const Slide = () => {
         </>
     )
 }
+
+const CopyWrapper = styled(Copy)`
+    color: ${({theme}) => theme.colorPrimary};
+    margin: 0 10px -2px;
+    cursor: pointer;
+`
 
 const HamburgerPosition = styled(Hamburger)`
     position: absolute;
