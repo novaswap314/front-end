@@ -103,8 +103,8 @@ const Slide = () => {
 
     const getOutputValue = (value) => {
         let decimal = 18;
-        if(!user.isBuy) {
-            decimal = user.currentPairInfo.decimals
+        if(user.isBuy) {
+            decimal = user.currentPairInfo?.decimals
         }
         dispatch(userActions.setOutput({
             inputValue: value,
