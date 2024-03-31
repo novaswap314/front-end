@@ -35,7 +35,10 @@ const Slide = () => {
         abi: novaAbi,
         address: novaAddress,
         functionName: user.isBuy ? 'routeBuyOut' : 'routeSellOut',
-        args: [user.currentPairInfo?.tokenAddress, parseUnits(user?.input.inputValue.toString(), user.currentPairInfo?.decimals)]
+        args: [
+            user.currentPairInfo?.tokenAddress, 
+            parseUnits(user?.input.inputValue.toString(), user?.input.decimals)
+        ]
     })
 
     useEffect(() => {
@@ -71,7 +74,7 @@ const Slide = () => {
     useEffect(() => {
         if (outData) {
             dispatch(userActions.setOutput({
-                inputValue: powWithDecimals(outData, user.currentPairInfo.decimals, false)
+                inputValue: user.isBuy ? powWithDecimals(outData, user.currentPairInfo.decimals, false) : powWithDecimals(outData, 18, false)
             }))
         }
     }, [outLoading, outData])
@@ -94,7 +97,7 @@ const Slide = () => {
         }
         dispatch(userActions.setInput({
             inputValue: value,
-            inputDecimal: decimal
+            decimals: decimal
         }))
     }
 
@@ -105,7 +108,7 @@ const Slide = () => {
         }
         dispatch(userActions.setOutput({
             inputValue: value,
-            inputDecimal: decimal
+            decimals: decimal
         }))
     }
 

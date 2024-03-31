@@ -38,7 +38,7 @@ export const Header = () => {
 
     useEffect(() => {
         checkAddress()
-        if (status == 'connected' && chain) {
+        if (chain) {
             dispatch(userActions.setCurrentChainInfo({
                 id: chain.id,
                 name: chain.name,
@@ -87,7 +87,7 @@ export const Header = () => {
             <ButtonWrapper>
                 <a href="https://twitter.com/novaswap_erc" target="_black"><IconsWrapper><TwitterXFill /></IconsWrapper></a>
                 {
-                    user.address
+                    user.address && user?.currentChainInfo
                     ? <GasWrapper>
                             <Dropdown
                                 menu={{ items: chains.map((v) => {

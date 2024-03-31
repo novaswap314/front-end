@@ -49,10 +49,7 @@ export default function SwapBuyReck({ onFinish }) {
                 // gasPrice: gas,
             })
         } else {
-            // let amount = parseUnits(user?.input.inputValue.toString(), 18)  // token精度处理
-            // let amount = powWithDecimals(user?.input.inputValue.toString(), user?.input.inputDecimal, false)
             let amount = BigInt(user?.input.inputValue * (10 ** Number(user?.input.inputDecimal)))
-            
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,
