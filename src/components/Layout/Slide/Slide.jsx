@@ -78,11 +78,12 @@ const Slide = () => {
 
     const ETHPrice = (pool0, pool1) => {
         // 0 eth / 1 代币
-        let formatPool0 = powWithDecimals(pool0, user.currentPairInfo.decimals, false)
+        let formatPool0 = powWithDecimals(pool0, 18, false)
         let formatPool1 = powWithDecimals(pool1, user.currentPairInfo.decimals, false)
         if (formatPool0 == 0) {
             return 0
         }
+        console.log('Coin Amount: Token Amount', formatPool0, formatPool1, user.currentPairInfo.decimals);
         return formatNumber(formatPool0 / formatPool1)
     }
 
@@ -172,7 +173,7 @@ const Slide = () => {
                         </div>
                         <div>
                             <Text>Liquidity</Text>
-                            <BoldText>{user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.blockToUnlockLiquidity)) : 'Loading...'}</BoldText>
+                            <BoldText>{user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool0p)) : 'Loading...'}</BoldText>
                         </div>
                     </div>
                 </Panel>
@@ -183,7 +184,7 @@ const Slide = () => {
                     </div>
                     <div className="flex items-center justify-between">
                         <Text>Pooled {user.currentPairInfo ? user.currentPairInfo.symbol : 'Loading...'}:</Text>
-                        <BoldText>{ user.currentPairInfo ? formatNumber(formatEther(user.currentPairInfo.pool1p)) : 'Loading...' }</BoldText>
+                        <BoldText>{ user.currentPairInfo ? formatNumber(powWithDecimals(user.currentPairInfo.pool1p, user.currentPairInfo.decimals, false)) : 'Loading...' }</BoldText>
                     </div>
                 </Panel>
                 <PanelColor className="mt-10">

@@ -29,6 +29,8 @@ export default function Launchpad() {
     const { open } = useWeb3Modal()
     const { data: gasPrice } = useGasPrice()
     const { address } = useAccount()
+    const [readingStartBlock, setReadingStartBlock] = useState(BigInt(0))
+    const [readingEndBlock, setReadingEndBlock] = useState(BigInt(0))
 
     const openNotificationError = (message) => {
         api['error']({
@@ -118,21 +120,43 @@ export default function Launchpad() {
         console.log("Failed:", errorInfo);
     };
 
-    const getDeployedList = async () => {
+    const addEvent = (newEvent) => {
+        setAllEvents((prevEvents) => [...prevEvents, newEvent]);
+    };
 
+    const pendingBlockEvent = async (startBlock, endBlock) => {
+        setReadingStartBlock(startBlock)
+        setReadingEndBlock(endBlock)
         try {
-            const allEvents = await factoryContract.getPastEvents('NewDeployed', {
+            const blockEvents = await factoryContract.getPastEvents('NewDeployed', {
                 filter: { deployer: address },
-                fromBlock: 38989113,
-                toBlock: 'latest'
+                fromBlock: startBlock,
+                toBlock: endBlock
             })
-            setAllEvents(allEvents)
-            setListLoading(false)
+            setAllEvents((prevEvents) => [...prevEvents, ...blockEvents]);
+            // setListLoading(false)
             console.log('all events:', allEvents)
         } catch(err) {
-            setListLoading(false)
+            // setListLoading(false)
             openNotificationError(err?.message || 'Please try again later.')
         }
+    }
+
+    const getDeployedList = async () => {
+        let startBlock = BigInt(38990718);
+        let latestBlock = await web3.eth.getBlockNumber();
+        const blockCheckRange = 5000;
+        if(latestBlock - BigInt(blockCheckRange) <= startBlock) {
+            pendingBlockEvent(startBlock, latestBlock)
+            return
+        }
+        for(;;) {
+            console.log("current block:", startBlock)
+            if(startBlock > latestBlock) break
+            await pendingBlockEvent(startBlock, startBlock + BigInt(blockCheckRange));
+            startBlock += BigInt(blockCheckRange)
+        }
+        setListLoading(false)
     }
 
     const handleOpen = () => {
@@ -260,7 +284,8 @@ export default function Launchpad() {
                         </Form.Item>
                     </FormWrapper>
                     <MytokenWrapper>
-                        <Title className="mb-4">My Token </Title>
+                        <Title className="mb-4">My Tokens </Title>
+                        <Title className="mb-4">{readingStartBlock.toString()} - {readingEndBlock.toString()} </Title>
                         <ListWrapper>
                             {
                                 listLoading

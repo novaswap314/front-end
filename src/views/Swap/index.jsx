@@ -8,7 +8,7 @@ import { userActions } from '../../store/module/user';
 import { novaAbi, novaAddress } from '../../constant';
 import Loading from '../../components/Loading';
 import { debounce } from 'lodash'
-import { formatNumber } from '@/utils'
+import { formatNumber, powWithDecimals } from '@/utils'
 import Chart from '@/components/Charts/default.jsx'
 
 const RouletteWheel = () => {
@@ -45,11 +45,11 @@ const RouletteWheel = () => {
     }
   }, [ListData])
 
-  const ETHPrice = (pool0, pool1) => {
+  const ETHPriceWithDecimal = (pool0, pool1, decimal) => {
     // 0 eth / 1 代币
     let formatPool0 = formatEther(pool0)
-    let formatPool1 = formatEther(pool1)
-    if (formatPool0 == 0) {
+    let formatPool1 = powWithDecimals(pool1, decimal, false)
+    if (formatPool1 == 0) {
         return 0
     }
     return formatNumber(formatPool0 / formatPool1)
@@ -110,10 +110,10 @@ const RouletteWheel = () => {
                       <CA><a target='_blank' className='text-white underline' href={ user?.currentChainInfo?.blockExplorers?.default?.url + '/address/' + item.ca }>{item.ca.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a></CA>
                     </Col>
                     <Col className='flex flex-col items-start justify-center'>
-                      <Price>{ETHPrice(item.pool0p, item.pool1p)}</Price>
+                      <Price>{ETHPriceWithDecimal(item.pool0p, item.pool1p, item.decimals)}</Price>
                     </Col>
                     <Col className='flex flex-col items-start justify-center'>
-                      <Price>Liq.{ formatNumber(formatEther(item.blockToUnlockLiquidity)) }</Price>
+                      <Price>Liq.{ formatNumber(formatEther(item.pool0p)) }</Price>
                     </Col>
                     <Col className='flex flex-col items-end justify-center'>
                       <Button type="primary" onClick={() => handleChoosePair(item)}>Swap</Button>
