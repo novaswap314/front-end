@@ -6,6 +6,7 @@ import { Button, notification } from 'antd';
 import styled from 'styled-components';
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { parseUnits } from 'viem'
+import { powWithDecimals } from '@/utils'
 
 export default function SwapBuyReck({ onFinish }) {
     const { open } = useWeb3Modal()
@@ -36,11 +37,9 @@ export default function SwapBuyReck({ onFinish }) {
         //     });
         //     return;
         // }
-        
-        let amount = parseUnits(user?.input.inputValue.toString(), 18)
 
         if (user.isBuy) {
-            console.log('需要的gas', gas)
+            let amount = parseUnits(user?.input.inputValue.toString(), 18)  // 主网币精度
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,
@@ -50,6 +49,10 @@ export default function SwapBuyReck({ onFinish }) {
                 // gasPrice: gas,
             })
         } else {
+            // let amount = parseUnits(user?.input.inputValue.toString(), 18)  // token精度处理
+            // let amount = powWithDecimals(user?.input.inputValue.toString(), user?.input.inputDecimal, false)
+            let amount = BigInt(user?.input.inputValue * (10 ** Number(user?.input.inputDecimal)))
+            
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,

@@ -88,14 +88,24 @@ const Slide = () => {
     }
 
     const getInputValue = (value) => {
+        let decimal = 18;
+        if(!user.isBuy) {
+            decimal = user.currentPairInfo.decimals
+        }
         dispatch(userActions.setInput({
-            inputValue: value
+            inputValue: value,
+            inputDecimal: decimal
         }))
     }
 
     const getOutputValue = (value) => {
+        let decimal = 18;
+        if(!user.isBuy) {
+            decimal = user.currentPairInfo.decimals
+        }
         dispatch(userActions.setOutput({
-            inputValue: value
+            inputValue: value,
+            inputDecimal: decimal
         }))
     }
 
