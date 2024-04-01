@@ -72,13 +72,13 @@ const Home = () => {
     return(
         <Homewrapper>
             <h1>NovaSwap</h1>
-            <h1 className="mt-1">The First MarketPlace for ERC314</h1>
-            <h2>$? for airdrop Sooooooooooon!</h2>
+            <h1 className="mt-1">Novaswap is MarketPlace for ERC2510</h1>
+            <h2>Transaction mining is ongoing! Join Now.</h2>
             <A className="text-white text-3xl mt-14" href="https://twitter.com/novaswap_erc" target="_black"><TwitterX /></A>
             <Gird className="grid grid-cols-1 md:grid-cols-2 w-[80%] max-w-[900px]">
                 <GirdItem>$?</GirdItem>
                 {/* <GirdItem>IDO</GirdItem> */}
-                <GirdItem>ERC314</GirdItem>
+                <GirdItem>ERC2510</GirdItem>
             </Gird>
         </Homewrapper>
     )

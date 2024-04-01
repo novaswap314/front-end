@@ -18,10 +18,10 @@ const metadata = {
     url: 'https://web3modal.com', // origin must match your domain & subdomain
     icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
-const BSC = {
+const BSCTest = {
     id: 97,
-    name: 'BSCChainTest',
-    network: 'BSCChainTest',
+    name: 'BSC TestNet',
+    network: 'BSC TestNet',
     nativeCurrency: {
         decimals: 18,
         name: 'BNB',
@@ -43,7 +43,32 @@ const BSC = {
     },
 }
 
-const chains = [BSC]
+const DISChain = {
+    id: 513100,
+    name: 'Disney Chain',
+    network: 'Disney Chain',
+    nativeCurrency: {
+        decimals: 18,
+        name: 'DIS',
+        symbol: 'DIS',
+    },
+    rpcUrls: {
+        default: {
+            http: ['https://rpc.dischain.xyz'],
+        },
+        public: {
+            http: ['https://rpc.dischain.xyz'],
+        },
+    },
+    blockExplorers: {
+        default: {
+            name: 'Dis Explorer',
+            url: 'https://oklink.com/dis',
+        },
+    },
+}
+
+const chains = [BSCTest, DISChain]
 const config = defaultWagmiConfig({
     chains,
     projectId,
