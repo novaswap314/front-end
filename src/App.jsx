@@ -4,7 +4,7 @@ import { Web3ModalProvider } from '@/libs/wagmi.js'
 import { ConfigProvider } from 'antd';
 import { theme as getTheme } from "./theme";
 import Home from '@/views/Home/Home.jsx';
-import Launchpad from '@/views/Launchpad/index.jsx';
+import Toolkit from '@/views/Toolkit/index.jsx';
 import Header from '@/components/Layout/Header.jsx'
 import Enter from '@/views/Enter/index.jsx'
 
@@ -28,6 +28,9 @@ function App() {
                         railHoverBg: theme.gray3,
                         trackBg: theme.colorPrimary,
                         trackHoverBg: theme.colorPrimary,
+                    },
+                    Tabs: {
+                        itemColor: theme.gray2,
                     }
                 },
                 token: {
@@ -45,7 +48,7 @@ function App() {
                         <Header></Header>
                         <Switch>
                             <Route path="/homepage" component={Home} />
-                            <Route path="/launchpad" component={Launchpad} />
+                            <Route path="/toolkit" component={Toolkit} />
                             <Route path="/swap" component={Enter} />
                             <Redirect from='/*' to='/homepage' />
                         </Switch>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Web3 from 'web3';
 import { novaAbi, novaAddress } from '../../../constant';

@@ -15,7 +15,7 @@ import ArrowRight from '@/components/Icons/ArrowRight.jsx'
 const nav = [
     { path: '/homepage', label: 'Home' },
     { path: '/swap', label: 'Swap' },
-    { path: '/launchpad', label: 'Launchpad' },
+    { path: '/toolkit', label: 'ToolKit' },
 ]
 
 export const Header = () => {
