@@ -49,7 +49,7 @@ export default function SwapBuyReck({ onFinish }) {
                 // gasPrice: gas,
             })
         } else {
-            let amount = BigInt(user?.input.inputValue * (10 ** Number(user?.input.inputDecimal)))
+            let amount = BigInt(user?.input.inputValue * (10 ** Number(user?.input.decimals)))
             writeContract({
                 abi: novaAbi,
                 address: novaAddress,
