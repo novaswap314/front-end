@@ -70,7 +70,7 @@ export default function SwapBuyReck({ onFinish }) {
             }
             
             <p className='mt-4'>{error && (
-                <p>Error: {error.shortMessage || error.message}</p>
+                <span>Error: {error.shortMessage || error.message}</span>
               )}</p>
             <p className='mt-4'>{errorText}</p>
         </Fragment>
