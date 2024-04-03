@@ -33,15 +33,6 @@ const RouletteWheel = () => {
     args: [0, Number(listLength) - 1]
   })
 
-  const { isLoading: listLoadingToken, data: tokenData , error} = useReadContract({
-    abi: factoryObj?.routerABI,
-    address: factoryObj?.routerAddr,
-    functionName: 'getTokenInfo',
-    args: ['0x10F86D3C97A0dF10a5399363Af175a4F9bB69363']
-  })
-
-  console.log('加载数据', listLength, ListData, factoryObj?.routerAddr, tokenData)
-
   useEffect(() => {
     const currentChain = selectChainConfig(chainId)
     setFactoryObj(currentChain);
