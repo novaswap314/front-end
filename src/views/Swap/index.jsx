@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Col, Empty } from 'antd';
-import { useReadContract } from 'wagmi';
+import { useReadContract, useChainId } from 'wagmi';
 import { formatEther } from 'viem'
 import { useSelector, useDispatch } from 'react-redux';
 import { userActions } from '../../store/module/user';
-import { novaAbi, novaAddress } from '../../constant';
+import { selectChainConfig } from '../../constant';
 import Loading from '../../components/Loading';
 import { debounce } from 'lodash'
 import { formatNumber, powWithDecimals } from '@/utils'
@@ -15,20 +15,37 @@ const RouletteWheel = () => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
   const [formatList, setFormatList] = useState(null)
+
+  const chainId = useChainId()
+  
+  const [factoryObj, setFactoryObj] = useState();
+  
   const { isLoading, data: listLength } = useReadContract({
-    abi: novaAbi,
-    address: novaAddress,
+    abi: factoryObj?.routerABI,
+    address: factoryObj?.routerAddr,
     functionName: 'tokenLength'
   })
 
   const { isLoading: listLoading, data: ListData } = useReadContract({
-    abi: novaAbi,
-    address: novaAddress,
+    abi: factoryObj?.routerABI,
+    address: factoryObj?.routerAddr,
     functionName: 'tokenListRich',
     args: [0, Number(listLength) - 1]
   })
 
+  const { isLoading: listLoadingToken, data: tokenData , error} = useReadContract({
+    abi: factoryObj?.routerABI,
+    address: factoryObj?.routerAddr,
+    functionName: 'getTokenInfo',
+    args: ['0x10F86D3C97A0dF10a5399363Af175a4F9bB69363']
+  })
+
+  console.log('加载数据', listLength, ListData, factoryObj?.routerAddr, tokenData)
+
   useEffect(() => {
+    const currentChain = selectChainConfig(chainId)
+    setFactoryObj(currentChain);
+
     if (ListData) {
       let list = ListData.map((v) => {
         v.blockToUnlockLiquidity = v.blockToUnlockLiquidity.toString()
@@ -43,7 +60,7 @@ const RouletteWheel = () => {
       }
       setFormatList(list)
     }
-  }, [ListData])
+  }, [ListData, chainId, factoryObj])
 
   const ETHPriceWithDecimal = (pool0, pool1, decimal) => {
     // 0 eth / 1 代币

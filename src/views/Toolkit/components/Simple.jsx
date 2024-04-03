@@ -61,13 +61,19 @@ export default function Simple() {
         // let maxPerWallet = BigInt(values.max) * BigInt(values.supply) / BigInt(100)
         let maxSupply = BigInt(values.supply) * BigInt(10 ** Number(values.decimals))
         let maxPerWallet = BigInt(values.max) * maxSupply / BigInt(100)
+        let teamPartial = Math.trunc(Number(values.team) * 100);
+        let presalePartial = Math.trunc(Number(values.presale) * 100);
+        if(teamPartial + presalePartial > 10000) {
+            openNotificationError('Incorrect allocation ratio.')
+            return
+        }
 
         const constructorArgs = web3.eth.abi.encodeParameters(
-            ['address', 'string', 'string', 'uint256', 'uint256', 'uint256'],
-            [address.toString(), values.name, values.ticker, maxSupply, values.decimals, maxPerWallet]
+            ['address', 'string', 'string', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
+            [address.toString(), values.name, values.ticker, maxSupply, values.decimals, maxPerWallet, teamPartial, presalePartial]
           );
         console.log('bytecodehash:', web3.utils.keccak256(factoryObj?.factoryTokens[0].bytecodes))
-        console.log('parameters:', constructorArgs, [address.toString(), values.name, values.ticker, maxSupply, values.decimals, maxPerWallet])
+        console.log('parameters:', constructorArgs, [address.toString(), values.name, values.ticker, maxSupply, values.decimals, maxPerWallet, teamPartial, presalePartial])
 
         try {
             const deployContractMethod = factoryContract.methods.deployContract(factoryObj?.factoryTokens[0].bytecodes, constructorArgs);
