@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt, useGasPrice, useEstimateGas } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useGasPrice, useChainId, useEstimateGas } from 'wagmi';
 import { useSelector } from 'react-redux';
-import { novaAbi, novaAddress } from '../../constant';
+import { selectChainConfig } from '../../constant';
 import { Button, notification } from 'antd';
 import styled from 'styled-components';
 import { useWeb3Modal } from '@web3modal/wagmi/react'
@@ -15,6 +15,10 @@ export default function SwapBuyReck({ onFinish }) {
     const user = useSelector(state => state.user);
     const { data: gas } = useGasPrice()
     const { data: hash, error, isPending, writeContract } = useWriteContract()
+
+    const chainId = useChainId()
+    const [factoryObj, setFactoryObj] = useState();
+
     // const { data: gasData, isLoading: gasLoading, error: gasError } = useEstimateGas({
     //     to: novaAddress,
     //     value: parseEther(user?.input.inputValue.toString()),
@@ -25,8 +29,10 @@ export default function SwapBuyReck({ onFinish }) {
     })
 
     useEffect(() => {
+        const currentChain = selectChainConfig(chainId)
+        setFactoryObj(currentChain);
         onFinish(status)
-    }, [status])
+    }, [status, chainId])
     
     async function submit(e) {
         // if (!user.currentPairInfo?.tokenAddress) {
@@ -41,8 +47,8 @@ export default function SwapBuyReck({ onFinish }) {
         if (user.isBuy) {
             let amount = parseUnits(user?.input.inputValue.toString(), 18)  // 主网币精度
             writeContract({
-                abi: novaAbi,
-                address: novaAddress,
+                abi: factoryObj?.routerABI,
+                address: factoryObj?.routerAddr,
                 functionName: 'swapBuyReck',
                 args: [user.currentPairInfo?.tokenAddress],
                 value: amount,
@@ -51,8 +57,8 @@ export default function SwapBuyReck({ onFinish }) {
         } else {
             let amount = BigInt(user?.input.inputValue * (10 ** Number(user?.input.decimals)))
             writeContract({
-                abi: novaAbi,
-                address: novaAddress,
+                abi: factoryObj?.routerABI,
+                address: factoryObj?.routerAddr,
                 functionName: 'swapSellReck',
                 args: [user.currentPairInfo?.tokenAddress, amount],
                 // gasPrice: gas,

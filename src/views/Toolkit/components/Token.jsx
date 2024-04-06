@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Web3 from 'web3';
-import { novaAbi, novaAddress } from '../../../constant';
+
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useReadContract, useGasPrice, useAccount, useChainId } from 'wagmi';
 import { Button, Form, Input, notification } from 'antd';
@@ -24,8 +24,8 @@ export default function Token({ item }) {
     const [factoryObj, setFactoryObj] = useState();
 
     const { isLoading, data } = useReadContract({
-        abi: novaAbi,
-        address: novaAddress,
+        abi: factoryObj?.routerABI,
+        address: factoryObj?.routerAddr,
         functionName: 'getTokenInfo',
         args: [item?.returnValues.contractAddr]
     })

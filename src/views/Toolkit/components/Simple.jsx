@@ -165,7 +165,7 @@ export default function Simple() {
     return (
         <Fragment>
             <FormWrapper ref={formLaunch} form={form} name="validateOnly" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off" onValuesChange={handleFormValuesChange}>
-                <Title className="mb-4">ERC2510 Factory</Title>
+                <Title className="mb-4">ERC314 Protocol</Title>
 
                 <Row gutter={16}>
                     <Col span={12}>

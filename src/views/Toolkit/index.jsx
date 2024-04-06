@@ -15,12 +15,12 @@ const web3 = new Web3(window.ethereum);
 const tabs = [
     {
         key: "1",
-        label: "Simple",
+        label: "ERC314",
         children: <Simple />,
     },
     {
         key: "2",
-        label: "Stadard",
+        label: "ERC2510",
         children: <Standard />,
     },
 ];

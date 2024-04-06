@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Input, Button, List, Col, Row, Empty } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { novaAddress, novaAbi } from '@/constant';
+import { selectChainConfig } from '@/constant';
 import { useReadContract, useChainId } from 'wagmi';
 import { userActions } from '../../store/module/user';
 import { debounce } from 'lodash';
@@ -17,9 +17,11 @@ const SearchToken = ({ getSelectToken }) => {
     const chainId = useChainId()
     const dispatch = useDispatch()
     
+    const [factoryObj, setFactoryObj] = useState();
+    
     const { isLoading, data, error } = useReadContract({
-        address: novaAddress,
-        abi: novaAbi,
+        address: factoryObj?.routerAddr,
+        abi: factoryObj?.routerABI,
         functionName: 'getTokenInfo',
         args: [inputValue]
     })
@@ -30,7 +32,7 @@ const SearchToken = ({ getSelectToken }) => {
 
     const onInputChang = debounce((e) => {
         setInputValue(e.target.value);
-    }, 100) 
+    }, 100)
 
     const onPressEnter = () => {
 
@@ -50,6 +52,11 @@ const SearchToken = ({ getSelectToken }) => {
             dialog.closeDialog()
         }
     }
+
+    useEffect(() => {
+        const currentChain = selectChainConfig(chainId)
+        setFactoryObj(currentChain);
+    }, [chainId])
 
     return (
         <div>

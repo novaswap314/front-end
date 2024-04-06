@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Hamburger from "./Hamburger";
 import SwapInput from '@/components/SwapInput'
@@ -6,11 +6,11 @@ import Exchange from '@/components/Icons/Exchange'
 import SwapBuyReck from '@/components/WriteContract/SwapBuyReck.jsx'
 import { useDispatch, useSelector } from 'react-redux';
 import { formatEther, parseUnits } from 'viem'
-import { useBalance, useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { useBalance, useAccount, useReadContract, useWriteContract, useChainId } from 'wagmi'
 import { formatNumber, powWithDecimals, convertScientificToDecimal } from '@/utils'
 import { Button, notification } from 'antd';
 import { userActions } from '@/store/module/user';
-import { novaAbi, novaAddress } from "../../../constant";
+import { selectChainConfig } from "../../../constant";
 import Copy from '@/components/Icons/Copy.jsx'
 
 const Slide = () => {
@@ -19,21 +19,24 @@ const Slide = () => {
     const [api, contextHolder] = notification.useNotification();
     const { writeContract } = useWriteContract()
     const { address } = useAccount()
+    const chainId = useChainId()
+    const [factoryObj, setFactoryObj] = useState();
+
     const { isLoading, data: balance } = useBalance({
         address: address
     })
 
     const { isLoading: balanceLoading, data: readBalance, error } = useReadContract({
-        abi: novaAbi,
-        address: novaAddress,
+        abi: factoryObj?.routerABI,
+        address: factoryObj?.routerAddr,
         functionName: 'balanceOf',
         args: [user.currentPairInfo?.tokenAddress],
         account: address,
     })
 
     const { isLoading: outLoading, data: outData } = useReadContract({
-        abi: novaAbi,
-        address: novaAddress,
+        abi: factoryObj?.routerABI,
+        address: factoryObj?.routerAddr,
         functionName: user.isBuy ? 'routeBuyOut' : 'routeSellOut',
         args: [
             user.currentPairInfo?.tokenAddress, 
@@ -42,6 +45,8 @@ const Slide = () => {
     })
 
     useEffect(() => {
+        const currentChain = selectChainConfig(chainId)
+        setFactoryObj(currentChain);
         if (!isLoading && balance) {
             // 当前主网币种
             dispatch(userActions.setInput(
@@ -53,7 +58,7 @@ const Slide = () => {
                 }
             ))
         }   
-    }, [isLoading, balance])
+    }, [isLoading, balance, chainId])
 
     useEffect(() => {
         if (user.currentPairInfo) {

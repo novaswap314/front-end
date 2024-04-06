@@ -10,12 +10,18 @@ import { selectChainConfig } from '../../../constant';
 const web3 = new Web3(window.ethereum);
 
 export default function Standard() {
+    const { address } = useAccount()
+    const { data: gasPrice } = useGasPrice()
     const [form] = Form.useForm();
     const [submitLoading, setSubmitLoading] = useState(false)
     const [api, contextHolder] = notification.useNotification();
     const { open } = useWeb3Modal()
     const user = useSelector(state => state.user)
     const formLaunch = useRef()
+
+    const chainId = useChainId()
+    const [factoryContract, setFactoryContract] = useState();
+    const [factoryObj, setFactoryObj] = useState();
 
     const openNotificationError = (message) => {
         api['error']({
@@ -32,7 +38,65 @@ export default function Standard() {
     }
 
     const onFinish = async (values) => {
-        console.log("Success:", values);
+        console.log("Success:", values, address);
+        setSubmitLoading(true)
+        let maxSupply = BigInt(values.supply) * BigInt(10 ** Number(values.decimals))
+        let teamPartial = Math.trunc(Number(values.team) * 100);
+        let presalePartial = Math.trunc(Number(values.presale) * 100);
+        if(teamPartial + presalePartial > 10000) {
+            openNotificationError('Incorrect allocation ratio.')
+            return
+        }
+        const constructorArgs = web3.eth.abi.encodeParameters(
+            ['address', 'string', 'string', 'uint256', 'uint256', 'uint256', 'uint256'],
+            [address.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial]
+          );
+        console.log('bytecodehash:', web3.utils.keccak256(factoryObj?.factoryTokens[1].bytecodes))
+        console.log('parameters:', constructorArgs, [address.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial])
+
+        let solidValue = web3.utils.toWei(values.solidVal, "ether");
+        console.log(factoryObj?.factoryTokens[1])
+        try {
+            const deployContractMethod = factoryContract.methods.deployContract(factoryObj?.factoryTokens[1].bytecodes, constructorArgs);
+            const gasEstimate = await deployContractMethod.estimateGas({ from: address });
+            console.log('gasEstimate', gasEstimate, gasPrice, solidValue)
+            // 发送交易
+            const tx = {
+                from: address,
+                to: factoryObj?.factoryAddr,
+                data: deployContractMethod.encodeABI(),
+                gas: 5000000,
+                gasPrice: gasPrice.toString(),
+                value: solidValue
+            };
+            console.log('tx', tx)
+            const txHash = await web3.eth.sendTransaction(tx);
+            getReceipt(txHash.transactionHash);
+        } catch (err) {
+            openNotificationError(err?.message || 'Please try again later.')
+            setSubmitLoading(false)
+        }
+    };
+
+    const getReceipt = async (hash) => {
+        try {
+            const receipt = await web3.eth.getTransactionReceipt(hash);
+            if (receipt) {
+                if (receipt.status === true || receipt.status == 1) {
+                    openNotificationSuccess(`Transaction success`)
+                    setSubmitLoading(false)
+                    console.log('Transaction success: ', receipt);
+                } else {
+                    openNotificationError(`Transaction failed`)
+                    setSubmitLoading(false)
+                    console.log('Transaction failed: ', receipt);
+                }
+            } else {
+              setTimeout(() => getReceipt(hash), 2000);
+            }
+        } catch (err) {
+            console.log('getReceipt err:', err)
+        }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -66,20 +130,27 @@ export default function Standard() {
     };
 
     useEffect(() => {
+        const currentChain = selectChainConfig(chainId)
+        setFactoryObj(currentChain);
+        if(currentChain != null) {
+            const newFactoryContract = new web3.eth.Contract(currentChain.factoryABI, currentChain.factoryAddr)
+            setFactoryContract(newFactoryContract)
+        }
+
         formLaunch.current.setFieldsValue({
             decimals: 18, // decimals 的默认值 0
             team: 10,
             presale: 45,
             liquidity: 45
         })
-    }, []);
+    }, [chainId]);
 
 
     return (
         <Fragment>
             { contextHolder }
             <FormWrapper ref={formLaunch} form={form} name="validateOnly" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off" onValuesChange={handleFormValuesChange}>
-                <Title className="mb-4">Standard</Title>
+                <Title className="mb-4">ERC2510 - Trusted Golden Token Protocol</Title>
 
                 <Row gutter={16}>
                     <Col span={12}>
@@ -154,15 +225,15 @@ export default function Standard() {
                 </Row>
 
                 <Form.Item
-                    label="Basevalue"
-                    name="basevalue"
+                    label="Solid Value"
+                    name="solidVal"
                     rules={[
                         {
                             required: true,
                         },
                     ]}
                 >
-                    <Input placeholder="Enter bnb quantity." />
+                    <Input placeholder="Enter solidity quantity." />
                 </Form.Item>
 
                 <Row gutter={16}>
