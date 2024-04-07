@@ -1,4 +1,4 @@
-import { MD5SHA512 } from '../utils/md5'
+import { MD5SHA512 } from '../utils/md5.js';
 
 interface RequestOptions {
     method: string;
@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
     if (process.env.NODE_ENV === 'development') {
         return 'http://localhost:3001'; // 开发环境的API_BASE_URL
     } else {
-        return 'https://eli-api.fenus.xyz'; // 生产环境的API_BASE_URL
+        return 'https://novaswap.xyz/'; // 生产环境的API_BASE_URL
     }
 };
 
@@ -98,6 +98,16 @@ export const checkWhite = async (params: { [key: string]: any }) => {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
+        params,
+    };
+
+    return request(url, options);
+};
+
+export const tokenPrices = async (params: { [key: string]: any }) => {
+    const url = '/api/v1/token/token_prices'; // 替换为实际的API端点
+    const options: RequestOptions = {
+        method: 'GET',
         params,
     };
 

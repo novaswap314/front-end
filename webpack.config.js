@@ -50,6 +50,14 @@ module.exports = (env) => {
             hot: true,
             static: './dist',
             historyApiFallback: true,
+            proxy: [
+                {
+                    context: "/localapi",
+                    target: process.env.PROXY_BASE_URL, // 被替换的目标地址，即把 /api 替换成这个
+                    pathRewrite: {"^/localapi" : ""}, 
+                    changeOrigin: true,
+                }
+            ]
         },
         experiments: {
             asyncWebAssembly: true,
