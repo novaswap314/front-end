@@ -74,13 +74,13 @@ const Home = () => {
     return(
         <Homewrapper>
             <h1>NovaSwap</h1>
-            <h1 className="mt-1">Novaswap is MarketPlace for ERC2510</h1>
+            <h1 className="mt-1">Novaswap is MarketPlace for ERC-2510</h1>
             <h2>Transaction mining is ongoing! Join Now.</h2>
             <A className="text-white text-3xl mt-14" href="https://twitter.com/novaswap_erc" target="_black"><TwitterX /></A>
             <Gird className="grid grid-cols-1 md:grid-cols-2 w-[80%] max-w-[900px]">
-                <GirdItem>$?</GirdItem>
+                <GirdItem><A href="https://ethereum-magicians.org/t/erc2510-embedding-perpetual-value-and-liquidity-in-tokens/19577" target="_black">ERC-2510 Discuss</A></GirdItem>
+                <GirdItem><A href="https://github.com/ethereum/ERCs/pull/368" target="_black">ERC-2510 Proposal</A></GirdItem>
                 {/* <GirdItem>IDO</GirdItem> */}
-                <GirdItem><A href="" target="_black">ERC2510</A></GirdItem>
             </Gird>
         </Homewrapper>
     )
