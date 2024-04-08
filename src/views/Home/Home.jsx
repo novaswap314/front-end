@@ -63,6 +63,8 @@ const GirdItem = styled.div`
     font-size: 16px;
 `
 const A = styled.a`
+    text-decoration: none;
+    color: white;
     &:hover {
         color: ${({theme}) => theme.colorPrimary};
     }
@@ -78,7 +80,7 @@ const Home = () => {
             <Gird className="grid grid-cols-1 md:grid-cols-2 w-[80%] max-w-[900px]">
                 <GirdItem>$?</GirdItem>
                 {/* <GirdItem>IDO</GirdItem> */}
-                <GirdItem>ERC2510</GirdItem>
+                <GirdItem><A href="" target="_black">ERC2510</A></GirdItem>
             </Gird>
         </Homewrapper>
     )
