@@ -28,7 +28,7 @@ export function formatNumber(number) {
 }
 
 export function powWithDecimals(s, d, format = true) {
-    let cal = s.toString() / Math.pow(10, d?.toString())
+    let cal = s?.toString() / Math.pow(10, d?.toString())
     if (format) {
         return formatNumber(cal)
     } else {

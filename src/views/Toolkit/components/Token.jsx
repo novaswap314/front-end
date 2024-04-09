@@ -27,7 +27,8 @@ export default function Token({ item }) {
         abi: factoryObj?.routerABI,
         address: factoryObj?.routerAddr,
         functionName: 'getTokenInfo',
-        args: [item?.returnValues.contractAddr]
+        // args: [item?.returnValues.contractAddr]
+        args: [item]
     })
 
     const openNotificationError = (message) => {
@@ -46,7 +47,8 @@ export default function Token({ item }) {
     
     const onFinish = async (values) => {
         setSubmitLoading(true)
-        const tokenAddr = item?.returnValues.contractAddr;
+        // const tokenAddr = item?.returnValues.contractAddr;
+        const tokenAddr = item;
         console.log("values:", values, tokenAddr);
         const web3 = new Web3(window.ethereum);
         const tplContract = new web3.eth.Contract(factoryObj?.factoryTokens[0].abi, tokenAddr);
@@ -121,15 +123,15 @@ export default function Token({ item }) {
                         <>
                             <div className='grid md:grid-cols-5 flex-1 text-center'>
                                 <div>
-                                    <a target='_blank' className='text-white' href={ user?.currentChainInfo?.blockExplorers?.default?.url + '/address/' + item?.returnValues.contractAddr }>{item?.returnValues.contractAddr.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
-                                    <CopyWrapper onClick={() => copyCA(item?.returnValues.contractAddr)} />
+                                    <a target='_blank' className='text-white' href={ user?.currentChainInfo?.blockExplorers?.default?.url + '/address/' + item }>{item?.replace(/^(\w{7}).*(\w{5})$/, '$1...$2')}</a>
+                                    <CopyWrapper onClick={() => copyCA(item)} />
                                 </div>
-                                <div>{data.name}</div>
-                                <div>{data.symbol}</div>
-                                <div>{powWithDecimals(data.totalSupply.toString(), data.decimals.toString())}</div>
+                                <div>{data?.name}</div>
+                                <div>{data?.symbol}</div>
+                                <div>{powWithDecimals(data?.totalSupply.toString(), data?.decimals.toString())}</div>
                                 <div className="flex gap-x-2 text-right">
-                                    {!data.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
-                                    {!data.liquidityAdded && 
+                                    {!data?.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
+                                    {!data?.liquidityAdded && 
                                         <FormWrapper
                                             form={form}
                                             name="validate"

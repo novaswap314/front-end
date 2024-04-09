@@ -4,7 +4,7 @@ import Web3 from "web3";
 import { useSelector } from "react-redux";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { Button, Form, Empty, notification, Tabs } from "antd";
-import { useAccount, useGasPrice, useChainId } from "wagmi";
+import { useAccount, useGasPrice, useChainId, useReadContract } from "wagmi";
 import Loading from "@/components/Loading";
 import { selectChainConfig } from "../../constant";
 import Token from "./components/Token";
@@ -87,6 +87,14 @@ export default function Toolkit() {
         setListLoading(false);
     };
 
+    const { isLoading, data } = useReadContract({
+        abi: factoryObj?.factoryABI,
+        address: factoryObj?.factoryAddr,
+        functionName: 'getWalletDeployContract',
+        args: [],
+        account: address,
+    })
+
     const handleOpen = () => {
         open();
     };
@@ -102,9 +110,13 @@ export default function Toolkit() {
 
     useEffect(() => {
         if (user?.address && factoryContract) {
-            getDeployedList();
+            // getDeployedList();
+            if(!isLoading) {
+                setAllEvents(data)
+                setListLoading(false);
+            }
         }
-    }, [user?.address, factoryContract]);
+    }, [user?.address, factoryContract, isLoading]);
 
     const onChange = () => {
 
