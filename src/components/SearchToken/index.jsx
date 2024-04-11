@@ -48,6 +48,7 @@ const SearchToken = ({ getSelectToken }) => {
                 pool1p: data.pool1p?.toString(),
                 totalSupply: data.totalSupply?.toString(),
                 tokenAddress: inputValue,
+                tokenProp: data.tokenProp?.toString()
             })
             dialog.closeDialog()
         }

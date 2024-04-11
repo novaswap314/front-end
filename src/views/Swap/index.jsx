@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Button, Col, Empty } from 'antd';
-import { useReadContract, useChainId } from 'wagmi';
+import { useReadContract, useChainId, cookieStorage } from 'wagmi';
 import { formatEther } from 'viem'
 import { useSelector, useDispatch } from 'react-redux';
 import { userActions } from '../../store/module/user';
@@ -77,7 +77,10 @@ const RouletteWheel = () => {
     }
     // 池子基础信息
     dispatch(userActions.setCurrentPairInfo({
-      ...item,
+      ...{
+        ...item,
+        tokenProp: item.tokenProp?.toString()
+      },
       tokenAddress: item.ca,
     }))
   }
