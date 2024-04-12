@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Button } from "antd";
 import { createChart } from "lightweight-charts";
 import { tokenPrices } from '@/api/k'
+import { isAddressEqual } from 'viem'
 import SpwsClient from '../../libs/ws';
 import Loading from '../Loading'
 
@@ -15,8 +16,10 @@ const timeType = [
 
 export default function Chart({ ca }) {
     const chartContainerRef = useRef(null);
-    const [candlestick, setCandlestick] = useState(null)
+    // const [candlestick, setCandlestick] = useState(null)
     const [ws, setWs] = useState(null)
+    const caAddr = useRef(null);
+    const candlestick = useRef(null);
     const [dataLoading, setDataLoading] = useState(false)
     const [type, setType] = useState('5m')
 
@@ -32,6 +35,9 @@ export default function Chart({ ca }) {
             },
             timeScale: {
                 borderColor: "#71649C",
+                timeVisible: true,
+                timeFormat: '%Y-%m-%d %H:%M',
+                ticksVisible: true,
             },
         });
         let cs = chart.addCandlestickSeries({
@@ -43,8 +49,9 @@ export default function Chart({ ca }) {
         });
         cs.priceScale().applyOptions({
             borderColor: "#71649C",
+            minMove: 0.000000000001,
         });
-        setCandlestick(cs)
+        candlestick.current = cs
 
         // 清除组件时销毁图表
         return () => {
@@ -63,9 +70,17 @@ export default function Chart({ ca }) {
             }
             let res = JSON.parse(message)
             if (res.code == 200) { // type: 5m 30m 1h 1d
-                // if(res.data.type === type && res.data.)
+                if(res.data.type === type && isAddressEqual(`0x${res.data.addr.slice(2)}`, `0x${caAddr.current.slice(2)}`)) {
+                    let d = {
+                        time: Number(res.data.prices.ts),
+                        close: Number(res.data.prices.close),
+                        high: Number(res.data.prices.high),
+                        low: Number(res.data.prices.low),
+                        open: Number(res.data.prices.open),
+                    }
+                    candlestick.current.update(d)
+                }
             }
-            console.log('message>>', message)
         })
 
         return () => {
@@ -74,7 +89,7 @@ export default function Chart({ ca }) {
     }, [])
 
     useEffect(() => {
-        if (!candlestick) return;
+        if (!candlestick.current) return;
         if (dataLoading || !ca) return;
         setDataLoading(true)
         tokenPrices({
@@ -91,12 +106,18 @@ export default function Chart({ ca }) {
                         close: Number(v.close),
                     }
                 })
-                candlestick.setData(data);
+                candlestick.current.setData(data);
             } else {
             }
             setDataLoading(false)
         });
-    }, [candlestick, ca, type]);
+    }, [candlestick.current, caAddr.current, type]);
+
+    useEffect(() => {
+        if (ca) {
+            caAddr.current = ca;
+        }
+    }, [ca])
 
     return <Wrapper>
         {
