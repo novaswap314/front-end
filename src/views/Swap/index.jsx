@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userActions } from '../../store/module/user';
 import { selectChainConfig } from '../../constant';
 import Loading from '../../components/Loading';
-import { debounce } from 'lodash'
 import { formatNumber, powWithDecimals } from '@/utils'
 import Chart from '@/components/Charts/default.jsx'
 
@@ -95,8 +94,7 @@ const RouletteWheel = () => {
         <div className="blob"></div>
         <div className="points">Points: Coming soon.</div>
       </PointsWrapper> */}
-
-      <Chart />
+      <Chart ca={user.currentPairInfo?.ca}/>
 
       <Inner className="mt-5">
         <Header className="grid grid-cols-1 lg:grid-cols-4">

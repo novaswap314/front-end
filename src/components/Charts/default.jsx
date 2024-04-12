@@ -1,11 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { Button } from "antd";
 import { createChart } from "lightweight-charts";
 import { tokenPrices } from '@/api/k'
+import SpwsClient from '../../libs/ws';
+import Loading from '../Loading'
 
-export default function Chart() {
+const timeType = [
+    { label: '5m', id: '5m' },
+    { label: '30m', id: '30m' },
+    { label: '1h', id: '1h' },
+    { label: '1d', id: '1d' },
+]
+
+export default function Chart({ ca }) {
     const chartContainerRef = useRef(null);
     const [candlestick, setCandlestick] = useState(null)
+    const [ws, setWs] = useState(null)
+    const [dataLoading, setDataLoading] = useState(false)
+    const [type, setType] = useState('5m')
 
     useEffect(() => {
         const chart = createChart(chartContainerRef.current, {
@@ -28,6 +41,9 @@ export default function Chart() {
             wickUpColor: "#26a69a",
             wickDownColor: "#ef5350",
         });
+        cs.priceScale().applyOptions({
+            borderColor: "#71649C",
+        });
         setCandlestick(cs)
 
         // 清除组件时销毁图表
@@ -36,44 +52,87 @@ export default function Chart() {
         };
     }, []);
 
+
+    useEffect(() => {
+        let url = `${process.env.WSS_URL}/api/v1/token/ws_token_prices`
+        let ws = new SpwsClient(url)
+        ws.setOnMessageCallback((event) => {
+            const message = event.data
+            if (message == 'pong') {
+                return
+            }
+            let res = JSON.parse(message)
+            if (res.code == 200) { // type: 5m 30m 1h 1d
+                // if(res.data.type === type && res.data.)
+            }
+            console.log('message>>', message)
+        })
+
+        return () => {
+            ws.close()
+        }
+    }, [])
+
     useEffect(() => {
         if (!candlestick) return;
-        candlestick.priceScale().applyOptions({
-            borderColor: "#71649C",
+        if (dataLoading || !ca) return;
+        setDataLoading(true)
+        tokenPrices({
+            token_addr: ca,
+            time_type: type,
+        }).then((res) => {
+            if (res.data.code == 200) {
+                let data = res.data.data.prices.map(v => {
+                    return {
+                        time: Number(v.ts),
+                        open: Number(v.open),
+                        high: Number(v.high),
+                        low: Number(v.low),
+                        close: Number(v.close),
+                    }
+                })
+                candlestick.setData(data);
+            } else {
+            }
+            setDataLoading(false)
         });
-        // 设置数据
-        
-        const data = [
-            { open: 10, high: 10.63, low: 9.49, close: 9.55, time: 1642427876 },
-            { open: 9.55, high: 10.3, low: 9.42, close: 9.94, time: 1642514276 },
-            { open: 9.94, high: 10.17, low: 9.92, close: 9.78, time: 1642600676 },
-            { open: 9.78, high: 10.59, low: 9.18, close: 9.51, time: 1642687076 },
-            { open: 9.51, high: 10.46, low: 9.1, close: 10.17, time: 1642773476 },
-            { open: 10.17, high: 10.96, low: 10.16, close: 10.47, time: 1642859876 },
-            { open: 10.47, high: 11.39, low: 10.4, close: 10.81, time: 1642946276 },
-            { open: 10.81, high: 11.6, low: 10.3, close: 10.75, time: 1643032676 },
-            { open: 10.75, high: 11.6, low: 10.49, close: 10.93, time: 1643119076 },
-            { open: 10.93, high: 11.53, low: 10.76, close: 10.96, time: 1643205476 },
-        ];
+    }, [candlestick, ca, type]);
 
-        candlestick.setData(data);
-        // tokenPrices({
-        //     token_addr: "0X10F86D3C97A0DF10A5399363AF175A4F9BB69363",
-        //     time_type: "5m",
-        // }).then((res) => {
-        //     if (res.code == 200) {
-        //         // candlestick.setData(res.data.prices)
-
-                
-                
-        //     } else {
-        //     }
-        // });
-    }, [candlestick]);
-
-    return <ChartWrapper ref={chartContainerRef}></ChartWrapper>;
+    return <Wrapper>
+        {
+            dataLoading && <LoadingW><Loading></Loading></LoadingW>
+        }
+        <BittonWrapper>
+            {
+                timeType.map(v => {
+                    return v.id === type
+                    ? <Button key={v.id} type="primary">{ v.label }</Button>
+                    : <Button onClick={() => setType(v.id)} key={v.id} ghost >{ v.label }</Button>
+                })
+            }
+        </BittonWrapper>
+        <ChartWrapper ref={chartContainerRef}></ChartWrapper>
+    </Wrapper>
 }
-
+const LoadingW = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+`
+const Wrapper = styled.div`
+    width: 100%;
+    position: relative;
+`
+const BittonWrapper = styled.div`
+    width: 100%;
+    padding: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+`
 const ChartWrapper = styled.div`
     width: 100%;
     border-radius: ${({ theme }) => theme.secondRadius}px;

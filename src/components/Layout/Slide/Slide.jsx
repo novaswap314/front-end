@@ -177,7 +177,7 @@ const Slide = () => {
                     <Panel className='flex-1'>
                         <div className="flex items-center justify-around">
                             <div>
-                                <Text>{user.currentChainInfo?.nativeCurrency.symbol}: ????$</Text>
+                                <Text>{user.currentPairInfo?.symbol}: ????</Text>
                                 <Button type="primary" size="small" className="mt-2">Claim</Button>
                             </div>
                         </div>

@@ -14,7 +14,6 @@ require('dotenv').config({
 })
 
 module.exports = (env) => {
-    console.log('envPath>>', process.env.ELECTRUMX_PROXY_BASE_URL)
     return {
         mode: process.env.NODE_ENV,  // 开发模式
         entry: './src/index.js', // 入口文件
