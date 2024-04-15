@@ -7,8 +7,6 @@ import { Button, Form, Input, Row, Col, Slider, Empty, notification, InputNumber
 import { useAccount, useGasPrice, useChainId } from 'wagmi'
 import { selectChainConfig } from '../../../constant';
 
-const web3 = new Web3(window.ethereum);
-
 export default function Standard() {
     const { address } = useAccount()
     const { data: gasPrice } = useGasPrice()
@@ -38,8 +36,12 @@ export default function Standard() {
     }
 
     const onFinish = async (values) => {
+        let web3 = new Web3(window.ethereum);
         console.log("Success:", values, address);
-        setSubmitLoading(true)
+        if(!address) {
+            openNotificationError('Please reconnect wallet.')
+            return
+        }
         let maxSupply = BigInt(values.supply) * BigInt(10 ** Number(values.decimals))
         let teamPartial = Math.trunc(Number(values.team) * 100);
         let presalePartial = Math.trunc(Number(values.presale) * 100);
@@ -49,13 +51,15 @@ export default function Standard() {
         }
         const constructorArgs = web3.eth.abi.encodeParameters(
             ['address', 'string', 'string', 'uint256', 'uint256', 'uint256', 'uint256'],
-            [address.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial]
+            [address?.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial]
           );
         console.log('bytecodehash:', web3.utils.keccak256(factoryObj?.factoryTokens[1].bytecodes))
-        console.log('parameters:', constructorArgs, [address.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial])
+        console.log('parameters:', constructorArgs, [address?.toString(), values.name, values.ticker, maxSupply, values.decimals, teamPartial, presalePartial])
 
         let solidValue = web3.utils.toWei(values.solidVal, "ether");
         console.log(factoryObj?.factoryTokens[1])
+
+        setSubmitLoading(true)
         try {
             const deployContractMethod = factoryContract.methods.deployContract(factoryObj?.factoryTokens[1].bytecodes, constructorArgs);
             const gasEstimate = await deployContractMethod.estimateGas({ from: address });
@@ -70,8 +74,16 @@ export default function Standard() {
                 value: solidValue
             };
             console.log('tx', tx)
-            const txHash = await web3.eth.sendTransaction(tx);
-            getReceipt(txHash.transactionHash);
+            // const txHash = await web3.eth.sendTransaction(tx);
+            // console.log('这里已经返回交易信息', txHash)
+            // getReceipt(txHash.transactionHash);
+
+            web3.eth.sendTransaction(tx).then(txHash => {
+                getReceipt(txHash.transactionHash);
+            }).catch(e => {
+                openNotificationError(e?.message || 'Please try again later.')
+                setSubmitLoading(false)
+            })
         } catch (err) {
             openNotificationError(err?.message || 'Please try again later.')
             setSubmitLoading(false)
@@ -79,16 +91,16 @@ export default function Standard() {
     };
 
     const getReceipt = async (hash) => {
+        let web3 = new Web3(window.ethereum);
         try {
             const receipt = await web3.eth.getTransactionReceipt(hash);
             if (receipt) {
+                setSubmitLoading(false)
                 if (receipt.status === true || receipt.status == 1) {
                     openNotificationSuccess(`Transaction success`)
-                    setSubmitLoading(false)
                     console.log('Transaction success: ', receipt);
                 } else {
                     openNotificationError(`Transaction failed`)
-                    setSubmitLoading(false)
                     console.log('Transaction failed: ', receipt);
                 }
             } else {
@@ -96,6 +108,8 @@ export default function Standard() {
             }
         } catch (err) {
             console.log('getReceipt err:', err)
+            openNotificationError(err?.message || 'Please try again later.')
+            setSubmitLoading(false)
         }
     };
 
@@ -131,6 +145,7 @@ export default function Standard() {
 
     useEffect(() => {
         const currentChain = selectChainConfig(chainId)
+        let web3 = new Web3(window.ethereum);
         setFactoryObj(currentChain);
         if(currentChain != null) {
             const newFactoryContract = new web3.eth.Contract(currentChain.factoryABI, currentChain.factoryAddr)
@@ -143,7 +158,7 @@ export default function Standard() {
             presale: 45,
             liquidity: 45
         })
-    }, [chainId]);
+    }, [chainId, submitLoading]);
 
 
     return (

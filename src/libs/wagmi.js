@@ -68,7 +68,7 @@ const DISChain = {
     },
 }
 
-const chains = [BSCTest, DISChain]
+const chains = [BSCTest]
 const config = defaultWagmiConfig({
     chains,
     projectId,

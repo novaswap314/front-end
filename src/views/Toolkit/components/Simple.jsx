@@ -7,8 +7,6 @@ import { Button, Form, Input, Row, Col, Slider, Empty, notification, InputNumber
 import { useAccount, useGasPrice, useChainId } from 'wagmi'
 import { selectChainConfig } from '../../../constant';
 
-const web3 = new Web3(window.ethereum);
-
 export default function Simple() {
     const [form] = Form.useForm();
     const [allEvents, setAllEvents] = useState([])
@@ -25,6 +23,8 @@ export default function Simple() {
     const chainId = useChainId()
     const [factoryContract, setFactoryContract] = useState();
     const [factoryObj, setFactoryObj] = useState();
+
+    const web3 = new Web3(window.ethereum);
 
     const openNotificationError = (message) => {
         api['error']({

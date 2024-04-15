@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Web3 from 'web3';
 
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { useReadContract, useGasPrice, useAccount, useChainId } from 'wagmi';
+import { useReadContract, useGasPrice, useAccount, useChainId, useBlock } from 'wagmi';
 import { Button, Form, Input, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { powWithDecimals } from '@/utils';
@@ -21,13 +21,15 @@ export default function Token({ item }) {
     const { open } = useWeb3Modal()
     const user = useSelector(state => state.user)
     const chainId = useChainId()
+    const { data: lastBlock, isLoading: blockLoading } = useBlock()
     const [factoryObj, setFactoryObj] = useState();
+
+    const formLaunch = useRef()
 
     const { isLoading, data } = useReadContract({
         abi: factoryObj?.routerABI,
         address: factoryObj?.routerAddr,
         functionName: 'getTokenInfo',
-        // args: [item?.returnValues.contractAddr]
         args: [item]
     })
 
@@ -56,7 +58,7 @@ export default function Token({ item }) {
         let coinAmount = web3.utils.toWei(values.amount, 'ether')
 
         try {
-            const addLiqMethod = tplContract.methods.addLiquidity(38918947 + 10000000);
+            const addLiqMethod = tplContract.methods.addLiquidity(values.height);
             const gasEstimate = await addLiqMethod.estimateGas({ from: address,  value: coinAmount});
             console.log('gasEstimate', gasEstimate, gasPrice)
             // 发送交易
@@ -110,7 +112,13 @@ export default function Token({ item }) {
     useEffect(() => {
         const currentChain = selectChainConfig(chainId)
         setFactoryObj(currentChain);
-    }, [user?.address, chainId]);
+        console.log('formLaunch ', formLaunch)
+        if(!blockLoading && formLaunch?.current) {
+            formLaunch.current.setFieldsValue({
+                height: lastBlock?.number || 10000,
+            })
+        }
+    }, [user?.address, chainId, blockLoading]);
 
     return(
         <>
@@ -130,9 +138,10 @@ export default function Token({ item }) {
                                 <div>{data?.symbol}</div>
                                 <div>{powWithDecimals(data?.totalSupply.toString(), data?.decimals.toString())}</div>
                                 <div className="flex gap-x-2 text-right">
-                                    {!data?.tradingEnable && <Button type="primary" size="small">No Trade</Button>}
+                                    {!data?.tradingEnable && <Button type="primary" size="small">Untradable</Button>}
                                     {!data?.liquidityAdded && 
                                         <FormWrapper
+                                            ref={formLaunch}
                                             form={form}
                                             name="validate"
                                             layout="vertical"
@@ -146,11 +155,11 @@ export default function Token({ item }) {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: "Block height",
+                                                        message: "required unlock Block height",
                                                     },
                                                 ]}
                                             >
-                                                <Input style={InputStyle} placeholder='Block height' />
+                                                <Input style={InputStyle} placeholder='Block Height'/>
                                             </Form.Item>
                                             <Form.Item
                                                 name="amount"
@@ -158,11 +167,11 @@ export default function Token({ item }) {
                                                 rules={[
                                                     {
                                                         required: true,
-                                                        message: "Amount",
+                                                        message: "required liquidity amount",
                                                     },
                                                 ]}
                                             >
-                                                <Input style={InputStyle} placeholder='Amount'/>
+                                                <Input style={InputStyle} placeholder='Liquid Amount'/>
                                             </Form.Item>
                     
                                             <Form.Item>
