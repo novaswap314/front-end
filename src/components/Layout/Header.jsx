@@ -85,7 +85,7 @@ export const Header = () => {
                 }
             </NavWrapper>
             <ButtonWrapper>
-                <a href="https://twitter.com/novaswap_erc" target="_black"><IconsWrapper><TwitterXFill /></IconsWrapper></a>
+                <a href="https://x.com/hellodex_io" target="_black"><IconsWrapper><TwitterXFill /></IconsWrapper></a>
                 {
                     user.address && user?.currentChainInfo
                     ? <GasWrapper>
